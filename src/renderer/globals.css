@@ -5,75 +5,41 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: rgb(12, 11, 14);
+  --foreground: rgb(250, 250, 250);
+  --card: rgb(14, 14, 16);
+  --card-foreground: rgb(250, 250, 250);
+  --popover: rgb(24, 24, 27);
+  --popover-foreground: rgb(250, 250, 250);
+  --primary: rgb(190, 242, 100);
+  --primary-foreground: rgb(26, 46, 5);
+  --secondary: rgb(14, 14, 16);
+  --secondary-foreground: rgb(250, 250, 250);
+  --muted: rgb(14, 14, 16);
+  --muted-foreground: rgb(39, 39, 42);
+  --accent: rgb(14, 14, 16);
+  --accent-foreground: rgb(250, 250, 250);
+  --destructive: rgb(255, 100, 103);
+  --destructive-foreground: rgb(69 10 10);
+  --border: rgb(204, 204, 204);
+  --input: rgb(204, 204, 204);
+  --ring: rgb(0, 130, 54);
+  --chart-1: rgb(20, 71, 230);
+  --chart-2: rgb(190, 242, 100);
+  --chart-3: rgb(254, 154, 0);
+  --chart-4: rgb(173, 70, 255);
+  --chart-5: rgb(255, 32, 86);
+  --radius: 0.65rem;
+  --sidebar: rgb(24, 24, 27);
+  --sidebar-foreground: rgb(250, 250, 250);
+  --sidebar-primary: rgb(190, 242, 100);
+  --sidebar-primary-foreground: rgb(13, 84, 43);
+  --sidebar-accent: rgb(14, 14, 16);
+  --sidebar-accent-foreground: rgb(250, 250, 250);
+  --sidebar-border: rgb(204, 204, 204);
+  --sidebar-ring: rgb(0, 130, 54);
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
-}
 
 @theme inline {
   --color-background: var(--background);
@@ -131,4 +97,13 @@
     -webkit-app-region: no-drag;
     -webkit-font-smoothing: antialiased;
   }
+}
+
+
+@theme {
+  --shadow-shape: 0px 8px 8px rgba(0, 0, 0, 0.1), 0px 4px 4px rgba(0, 0, 0, 0.1), 0px 2px 2px rgba(0, 0, 0, 0.1), 0px 0px 0px 1px rgba(0, 0, 0, 0.1), inset 0px 0px 0px 1px rgba(255, 255, 255, 0.03), inset 0px 1px 0px rgba(255, 255, 255, 0.03);
+
+    --shadow-shape-content: 0px 0px 0px 1px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.02), inset 0px 0px 0px 1px rgba(255, 255, 255, 0.02);
+
+
 }

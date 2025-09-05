@@ -10,11 +10,11 @@ export async function MainWindow() {
     id: 'main',
     title: displayName,
     width: 700,
-    height: 473,
+    height: 600,
     show: false,
     center: true,
     movable: true,
-    resizable: false,
+    resizable: true,
     alwaysOnTop: true,
     autoHideMenuBar: true,
 
@@ -24,9 +24,9 @@ export async function MainWindow() {
   })
 
   window.webContents.on('did-finish-load', () => {
-    if (ENVIRONMENT.IS_DEV) {
-      window.webContents.openDevTools({ mode: 'detach' })
-    }
+    // if (ENVIRONMENT.IS_DEV) {
+    //   window.webContents.openDevTools({ mode: 'detach' })
+    // }
 
     window.show()
   })
