@@ -1,11 +1,13 @@
 import { ConnectionForm } from 'renderer/components/connectionForm'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export function MainScreen() {
+  const [version, setVersion] = useState(0)
   useEffect(() => {
     async function updateVerify() {
       await window.App.updateApp()
+      setVersion(await window.App.fetchAppVersion())
     }
     updateVerify()
   }, [])
@@ -32,6 +34,9 @@ export function MainScreen() {
         </div>
       </TabsContent>
       <TabsContent value="readings">opa</TabsContent>
+      <span className="text-center my-2 text-sm text-muted-foreground">
+        v{version}
+      </span>
     </Tabs>
   )
 }

@@ -9,7 +9,8 @@ export const PLATFORM = {
 }
 
 export const IPC = {
-  APP: {
+  APP_VERSION: {
+    FETCH: 'app: fetch',
     UPDATE: 'app: update',
   },
   PORTS: {

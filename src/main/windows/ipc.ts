@@ -5,7 +5,7 @@ import { getConfigFile, updateCsvFile } from './lib/s3-client'
 import { store } from './lib/store'
 // import { parse } from 'csv-parse'
 
-ipcMain.handle(IPC.APP.UPDATE, async (): Promise<any> => {
+ipcMain.handle(IPC.APP_VERSION.UPDATE, async (): Promise<any> => {
   try {
     const response = await getConfigFile()
     const mostRecentVersion = response.version
@@ -21,6 +21,11 @@ ipcMain.handle(IPC.APP.UPDATE, async (): Promise<any> => {
   } catch {
     return
   }
+})
+
+ipcMain.handle(IPC.APP_VERSION.FETCH, async (): Promise<number> => {
+  const response = store.get('version')
+  return response
 })
 
 ipcMain.handle(IPC.PORTS.FETCH, async (): Promise<any> => {
