@@ -71,35 +71,14 @@ export function ConnectionForm() {
     },
   })
 
-  function handleCreateConnection(data: any) {
-    console.log(data)
+  async function handleCreateConnection(data: ConnectionFormType) {
+    // console.log(data)
+    const csv = await window.App.fetchCsv({
+      equipment: data.equipment,
+      firmwareVersion: data.firmwareVersion,
+    })
+    console.log(csv)
   }
-
-  // const { data: equipments, isFetching: isFetchingEquipmentConfig } = useQuery({
-  //   queryKey: ['fetchEquipmentsConfig'],
-  //   queryFn: async () => {
-  //     const equipmentsConfig = Object.values(
-  //       (await window.App.fetchEquipmentsConfig()).equipments
-  //     )
-
-  //     const uniqueEquipment = Array.from(
-  //       new Map(
-  //         equipmentsConfig.map(equipmentConfig => [
-  //           equipmentConfig.name,
-  //           equipmentConfig,
-  //         ])
-  //       ).values()
-  //     )
-
-  //     const availableFirmwares = equipmentsConfig?.filter(
-  //       equipmentConfig => equipmentConfig.name !== equipment
-  //     )
-  //     console.log(availableFirmwares)
-  //     setFirmwares(availableFirmwares)
-
-  //     return uniqueEquipment
-  //   },
-  // })
 
   return (
     <form
@@ -154,10 +133,7 @@ export function ConnectionForm() {
                 <SelectGroup>
                   {firmwares?.map(firmware => {
                     return (
-                      <SelectItem
-                        key={firmware.version}
-                        value={firmware.version}
-                      >
+                      <SelectItem key={firmware.branch} value={firmware.branch}>
                         {firmware.version}
                       </SelectItem>
                     )

@@ -1,13 +1,13 @@
 import { S3Client } from '@aws-sdk/client-s3'
 import { app } from 'electron'
-import { mkdir, rename, stat } from 'node:fs/promises'
-import { pipeline } from 'node:stream/promises'
+import { mkdir, rename } from 'node:fs/promises'
 import { createWriteStream } from 'node:fs'
 
 import path from 'node:path'
-import { Readable, Writable } from 'node:stream'
+import { Writable } from 'node:stream'
 import type { StoreType } from 'shared/types'
 import { env } from '~/env'
+import { getUserDataDir } from '../ipc'
 
 export const r2 = new S3Client({
   region: 'auto',
@@ -26,11 +26,6 @@ export async function updateCsvFile(
   equipment: string,
   branch: string
 ): Promise<any> {
-  function getUserDataDir() {
-    const base = app.getPath('userData')
-    return path.join(base, 'maps')
-  }
-
   const destDir = path.join(getUserDataDir(), equipment)
   const finalPath = path.join(destDir, `mapa_${branch}.csv`)
   const tmpPath = `${finalPath}.tmp`

@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IPC } from 'shared/constants'
-import type { PortsType, StoreType } from 'shared/types'
+import type { FetchCsvRequest, PortsType, StoreType } from 'shared/types'
 
 declare global {
   interface Window {
@@ -20,6 +20,9 @@ const API = {
   },
   fetchEquipmentsConfig(): Promise<StoreType> {
     return ipcRenderer.invoke(IPC.EQUIPMENTS.FETCH)
+  },
+  fetchCsv(req: FetchCsvRequest): Promise<any> {
+    return ipcRenderer.invoke(IPC.CSV.FETCH, req)
   },
 }
 

@@ -49,3 +49,52 @@ export interface StoreType {
   version: number
   equipments: Record<string, EquipmentProps>
 }
+
+export interface FetchCsvRequest {
+  equipment: string
+  firmwareVersion: string
+}
+
+export interface CsvProps {
+  UUID: string
+  'Teste automático': string
+  Modo: string
+  Tratamento: string
+  'Tabela (Modbus)': string
+  'Tipo (Modbus)': string
+  'Registrador (Modbus)': string
+  'Tipo (DNP3)': string
+  'Índice (DNP3)': string
+  'Limite inferior': string
+  'Limite superior': string
+  'Valor default': string
+  Divisor: string
+  'Unidade pt': string
+  'Unidade en': string
+  'Unidade es': string
+  'Conversão pt': string
+  'Conversão en': string
+  'Conversão es': string
+  Opcional: string
+  Condicional: string
+  'Nível de acesso': string
+  'Descrição pt': string
+  'Descrição en': string
+  'Descrição es': string
+  'Display pt': string
+  'Display en': string
+  'Display es': string
+  Observações: string
+  'Funcionalidade pt': string
+  'Funcionalidade en': string
+  'Funcionalidade es': string
+  'Grupo pt': string
+  'Grupo en': string
+  'Grupo es': string
+  Classificação: string
+  'Gráfico rápido': string
+  'Histórico de dados': string
+  'IEC 61850': string
+  Link: string
+  CDC: string
+}

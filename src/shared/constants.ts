@@ -19,4 +19,7 @@ export const IPC = {
   EQUIPMENTS: {
     FETCH: 'equipments: fetch',
   },
+  CSV: {
+    FETCH: 'csv: fetch',
+  },
 }
