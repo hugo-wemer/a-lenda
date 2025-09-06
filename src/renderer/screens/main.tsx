@@ -1,7 +1,15 @@
 import { ConnectionForm } from 'renderer/components/connectionForm'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
+import { useEffect } from 'react'
 
 export function MainScreen() {
+  useEffect(() => {
+    async function updateVerify() {
+      await window.App.updateApp()
+    }
+    updateVerify()
+  }, [])
+
   return (
     <Tabs className="h-screen" defaultValue="connection">
       <TabsList className="text-foreground h-auto gap-2 rounded-none w-screen px-0 py-1 bg-card border-b-1 border-popover justify-start">

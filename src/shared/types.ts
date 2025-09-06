@@ -38,8 +38,14 @@ export type ConnectionFormType = z.infer<typeof connectionFormSchema>
 
 export type PortsType = string[]
 
-export type EquipmentProps = { id: string; name: string; version: string }
+export type EquipmentProps = {
+  id: string
+  name: string
+  version: string
+  branch: string
+}
 
 export interface StoreType {
+  version: number
   equipments: Record<string, EquipmentProps>
 }

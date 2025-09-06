@@ -1,4 +1,12 @@
 import { S3Client } from '@aws-sdk/client-s3'
+import { app } from 'electron'
+import { mkdir, rename, stat } from 'node:fs/promises'
+import { pipeline } from 'node:stream/promises'
+import { createWriteStream } from 'node:fs'
+
+import path from 'node:path'
+import { Readable, Writable } from 'node:stream'
+import type { StoreType } from 'shared/types'
 import { env } from '~/env'
 
 export const r2 = new S3Client({
@@ -10,7 +18,40 @@ export const r2 = new S3Client({
   },
 })
 
-export async function getConfigFile(){
+export async function getConfigFile(): Promise<StoreType> {
   const result = await fetch(`${env.CLAUDFLARE_PUBLIC_URL}/config.json`)
-  return result
+  return result.json()
+}
+export async function updateCsvFile(
+  equipment: string,
+  branch: string
+): Promise<any> {
+  function getUserDataDir() {
+    const base = app.getPath('userData')
+    return path.join(base, 'maps')
+  }
+
+  const destDir = path.join(getUserDataDir(), equipment)
+  const finalPath = path.join(destDir, `mapa_${branch}.csv`)
+  const tmpPath = `${finalPath}.tmp`
+
+  await mkdir(destDir, { recursive: true })
+
+  const result = await fetch(
+    `${env.CLAUDFLARE_PUBLIC_URL}/${equipment}/mapa_v${branch}.csv`
+  )
+
+  const body = result.body
+
+  if (!result.body) {
+    return
+  }
+
+  const nodeFile = createWriteStream(tmpPath)
+  await result.body.pipeTo(
+    Writable.toWeb(nodeFile) as WritableStream<Uint8Array>
+  )
+
+  await rename(tmpPath, finalPath)
+  return { path: finalPath }
 }

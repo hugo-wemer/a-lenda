@@ -35,9 +35,7 @@ export function ConnectionForm() {
   const { data: equipmentsConfig } = useQuery({
     queryKey: ['fetchEquipmentsConfig'],
     queryFn: async () => {
-      const all = Object.values(
-        (await window.App.fetchEquipmentsConfig()).equipments
-      )
+      const all = Object.values(await window.App.fetchEquipmentsConfig())
       return all as EquipmentProps[]
     },
   })

@@ -9,10 +9,13 @@ export const PLATFORM = {
 }
 
 export const IPC = {
+  APP: {
+    UPDATE: 'app: update',
+  },
   PORTS: {
     FETCH: 'ports: fetch',
   },
   EQUIPMENTS: {
-    FETCH: 'equipments: fetch'
-  }
+    FETCH: 'equipments: fetch',
+  },
 }

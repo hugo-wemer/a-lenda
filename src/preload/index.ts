@@ -9,6 +9,9 @@ declare global {
 }
 
 const API = {
+  updateApp(): Promise<void> {
+    return ipcRenderer.invoke(IPC.APP.UPDATE)
+  },
   fetchPorts(): Promise<PortsType> {
     return ipcRenderer.invoke(IPC.PORTS.FETCH)
   },
