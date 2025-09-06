@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IPC } from 'shared/constants'
-import type { PortsType } from 'shared/types'
+import type { PortsType, StoreType } from 'shared/types'
 
 declare global {
   interface Window {
@@ -11,6 +11,9 @@ declare global {
 const API = {
   fetchPorts(): Promise<PortsType> {
     return ipcRenderer.invoke(IPC.PORTS.FETCH)
+  },
+  fetchEquipmentsConfig(): Promise<StoreType> {
+    return ipcRenderer.invoke(IPC.EQUIPMENTS.FETCH)
   },
 }
 

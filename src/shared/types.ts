@@ -37,3 +37,9 @@ export const connectionFormSchema = z.object({
 export type ConnectionFormType = z.infer<typeof connectionFormSchema>
 
 export type PortsType = string[]
+
+export type EquipmentProps = { id: string; name: string; version: string }
+
+export interface StoreType {
+  equipments: Record<string, EquipmentProps>
+}

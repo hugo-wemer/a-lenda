@@ -5,6 +5,8 @@ import { createWindow } from 'lib/electron-app/factories/windows/create'
 import { ENVIRONMENT } from 'shared/constants'
 import { displayName } from '~/package.json'
 import './ipc'
+import './lib/store'
+// import '~/env'
 
 export async function MainWindow() {
   const window = createWindow({

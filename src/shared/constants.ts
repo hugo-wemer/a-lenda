@@ -12,4 +12,7 @@ export const IPC = {
   PORTS: {
     FETCH: 'ports: fetch',
   },
+  EQUIPMENTS: {
+    FETCH: 'equipments: fetch'
+  }
 }

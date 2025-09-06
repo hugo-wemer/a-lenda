@@ -1,7 +1,10 @@
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { type ConnectionFormType, connectionFormSchema } from 'shared/types'
+import {
+  type ConnectionFormType,
+  EquipmentProps,
+  connectionFormSchema,
+} from 'shared/types'
 import {
   Select,
   SelectContent,
@@ -14,10 +17,13 @@ import {
 import { useState } from 'react'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
+import { useQuery } from '@tanstack/react-query'
+import { LoaderCircle } from 'lucide-react'
+import { queryClient } from '../lib/react-query'
 
 export function ConnectionForm() {
   const [equipment, setEquipment] = useState<string | null>()
-  const [ports, setPorts] = useState<string[]>([])
+  // const [ports, setPorts] = useState<string[]>([])
   const {
     register,
     setValue,
@@ -37,6 +43,22 @@ export function ConnectionForm() {
   function handleCreateConnection(data: any) {
     console.log(data)
   }
+
+  const { data: ports, isFetching: isFetchingPorts } = useQuery({
+    queryKey: ['fetchPorts'],
+    queryFn: async () => {
+      const response = await window.App.fetchPorts()
+      return response
+    },
+  })
+  const { data: equipmentConfig, isFetching: isFetchingEquipmentConfig } =
+    useQuery({
+      queryKey: ['fetchEquipmentsConfig'],
+      queryFn: async () => {
+        const equipmentConfig = await window.App.fetchEquipmentsConfig()
+        return Object.values(equipmentConfig.equipments)
+      },
+    })
 
   return (
     <form
@@ -60,7 +82,13 @@ export function ConnectionForm() {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel className="">Linha Black</SelectLabel>
-                  <SelectItem value="tm">TM</SelectItem>
+                  {equipmentConfig?.map(equipment => {
+                    return (
+                      <SelectItem key={equipment.id} value={equipment.name}>
+                        {equipment.name.toUpperCase()}
+                      </SelectItem>
+                    )
+                  })}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -97,7 +125,7 @@ export function ConnectionForm() {
             <span className="text-xs text-foreground/50">Porta de conexão</span>
             <Select
               onOpenChange={async () => {
-                setPorts(await window.App.fetchPorts())
+                queryClient.invalidateQueries({ queryKey: ['fetchPorts'] })
               }}
               onValueChange={port => {
                 setValue('port', port)
@@ -108,13 +136,17 @@ export function ConnectionForm() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {ports.toSorted().map(port => {
-                    return (
-                      <SelectItem key={port} value={port}>
-                        {port}
-                      </SelectItem>
-                    )
-                  })}
+                  {ports ? (
+                    ports?.toSorted().map(port => {
+                      return (
+                        <SelectItem key={port} value={port}>
+                          {port}
+                        </SelectItem>
+                      )
+                    })
+                  ) : (
+                    <LoaderCircle className="animateSpin" />
+                  )}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -136,7 +168,11 @@ export function ConnectionForm() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
+                    <SelectItem value="4800">4800</SelectItem>
                     <SelectItem value="9600">9600</SelectItem>
+                    <SelectItem value="19200">19200</SelectItem>
+                    <SelectItem value="57600">57600</SelectItem>
+                    <SelectItem value="115200">115200</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -200,6 +236,7 @@ export function ConnectionForm() {
                 <SelectContent>
                   <SelectGroup>
                     <SelectItem value="1">1</SelectItem>
+                    <SelectItem value="2">2</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
