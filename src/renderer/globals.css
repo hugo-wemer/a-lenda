@@ -96,6 +96,13 @@
     scroll-behavior: smooth;
     -webkit-app-region: no-drag;
     -webkit-font-smoothing: antialiased;
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+}
+
   }
 }
 

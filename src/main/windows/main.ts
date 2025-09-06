@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import { createWindow } from 'lib/electron-app/factories/windows/create'
 import { ENVIRONMENT } from 'shared/constants'
 import { displayName } from '~/package.json'
+import './ipc'
 
 export async function MainWindow() {
   const window = createWindow({
@@ -24,10 +25,9 @@ export async function MainWindow() {
   })
 
   window.webContents.on('did-finish-load', () => {
-    // if (ENVIRONMENT.IS_DEV) {
-    //   window.webContents.openDevTools({ mode: 'detach' })
-    // }
-
+    if (ENVIRONMENT.IS_DEV) {
+      window.webContents.openDevTools({ mode: 'detach' })
+    }
     window.show()
   })
 

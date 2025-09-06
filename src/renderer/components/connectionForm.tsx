@@ -11,12 +11,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 
 export function ConnectionForm() {
   const [equipment, setEquipment] = useState<string | null>()
+  const [ports, setPorts] = useState<string[]>([])
   const {
     register,
     setValue,
@@ -24,23 +25,14 @@ export function ConnectionForm() {
     formState: { errors },
   } = useForm<ConnectionFormType>({
     resolver: zodResolver(connectionFormSchema),
+    defaultValues: {
+      baudrate: 9600,
+      dataBits: 8,
+      parity: 'none',
+      stopBits: 1,
+      timeout: 3000,
+    },
   })
-
-  const defaultFields = {
-    baudrate: 9600,
-    dataBits: 8,
-    parity: 'none',
-    stopBits: 1,
-    timeout: 3000,
-  }
-
-  useEffect(() => {
-    setValue('baudrate', defaultFields.baudrate)
-    setValue('dataBits', defaultFields.dataBits)
-    setValue('parity', defaultFields.parity)
-    setValue('stopBits', defaultFields.stopBits)
-    setValue('timeout', defaultFields.timeout)
-  }, [])
 
   function handleCreateConnection(data: any) {
     console.log(data)
@@ -48,6 +40,7 @@ export function ConnectionForm() {
 
   return (
     <form
+      noValidate
       onSubmit={handleSubmit(handleCreateConnection)}
       className="space-y-4 flex flex-col items-center flex-1 justify-center"
     >
@@ -103,6 +96,9 @@ export function ConnectionForm() {
           <div>
             <span className="text-xs text-foreground/50">Porta de conexão</span>
             <Select
+              onOpenChange={async () => {
+                setPorts(await window.App.fetchPorts())
+              }}
               onValueChange={port => {
                 setValue('port', port)
               }}
@@ -112,7 +108,13 @@ export function ConnectionForm() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="COM5">COM5</SelectItem>
+                  {ports.toSorted().map(port => {
+                    return (
+                      <SelectItem key={port} value={port}>
+                        {port}
+                      </SelectItem>
+                    )
+                  })}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -166,7 +168,7 @@ export function ConnectionForm() {
               <Select
                 defaultValue="none"
                 onValueChange={parity => {
-                  setValue('parity', parity)
+                  setValue('parity', parity as ConnectionFormType['parity'])
                 }}
               >
                 <SelectTrigger className="w-[130px] bg-card border-muted-foreground">
@@ -175,6 +177,8 @@ export function ConnectionForm() {
                 <SelectContent>
                   <SelectGroup>
                     <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="even">Even</SelectItem>
+                    <SelectItem value="odd">Odd</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -207,10 +211,13 @@ export function ConnectionForm() {
           <div>
             <span className="text-xs text-foreground/50">Timeout</span>
             <Input
+              type="number"
               placeholder="Timeout"
               className="w-full bg-card border-muted-foreground"
               // defaultValue={3000}
-              {...register('timeout')}
+              {...register('timeout', {
+                setValueAs: v => (v === '' ? undefined : Number(v)),
+              })}
             />
             <span className="text-xs text-destructive">
               {errors.timeout?.message}

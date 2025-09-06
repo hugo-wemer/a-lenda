@@ -1,4 +1,6 @@
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
+import { IPC } from 'shared/constants'
+import type { PortsType } from 'shared/types'
 
 declare global {
   interface Window {
@@ -7,8 +9,9 @@ declare global {
 }
 
 const API = {
-  sayHelloFromBridge: () => console.log('\nHello from bridgeAPI! 👋\n\n'),
-  username: process.env.USER,
+  fetchPorts(): Promise<PortsType> {
+    return ipcRenderer.invoke(IPC.PORTS.FETCH)
+  },
 }
 
 contextBridge.exposeInMainWorld('App', API)

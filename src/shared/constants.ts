@@ -7,3 +7,9 @@ export const PLATFORM = {
   IS_WINDOWS: process.platform === 'win32',
   IS_LINUX: process.platform === 'linux',
 }
+
+export const IPC = {
+  PORTS: {
+    FETCH: 'ports: fetch',
+  },
+}

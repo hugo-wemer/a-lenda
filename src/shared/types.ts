@@ -19,16 +19,21 @@ export interface WindowCreationByIPC {
 }
 
 export const connectionFormSchema = z.object({
-  equipment: z.string('Campo requerido'),
-  firmwareVersion: z.string('Campo requerido'),
-  port: z.string('Campo requerido'),
-  baudrate: z.coerce.number('Campo requerido'),
-  dataBits: z.coerce.number('Campo requerido'),
-  parity: z.string('Campo requerido'), //z.union([z.literal('none'), z.literal('even'), z.literal('odd')]),
-  stopBits: z.coerce.number('Campo requerido'),
-  timeout: z.coerce
-    .number('Campo requerido')
-    .min(100, 'O timeout precisa ser maior que 100'),
+  equipment: z.string({ error: 'Campo requerido' }).min(1, 'Campo requerido'),
+  firmwareVersion: z
+    .string({ error: 'Campo requerido' })
+    .min(1, 'Campo requerido'),
+  port: z.string({ error: 'Campo requerido' }).min(1, 'Campo requerido'),
+  baudrate: z.number().int().min(110, 'Selecione um baudrate válido'),
+  dataBits: z.number().int().min(5, 'Mínimo 5').max(8, 'Máximo 8'),
+  parity: z.enum(['none', 'even', 'odd']),
+  stopBits: z.number().int().min(1, 'Mínimo 1').max(2, 'Máximo 2'),
+  timeout: z
+    .number()
+    .int({ message: 'O timeout precisa ser um número inteiro' })
+    .min(100, { message: 'O timeout precisa ser maior que 100ms' }),
 })
 
 export type ConnectionFormType = z.infer<typeof connectionFormSchema>
+
+export type PortsType = string[]
