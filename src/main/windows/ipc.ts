@@ -51,5 +51,5 @@ ipcMain.handle(IPC.CSV.FETCH, async (_, req: FetchCsvRequest): Promise<any> => {
   const finalPath = path.join(destDir, `mapa_${req.firmwareVersion}.csv`)
   const csv = await readCsv(finalPath)
   const blocks = organizeCsvInBlocks(csv)
-  return blocks
+  return csv
 })

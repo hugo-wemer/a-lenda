@@ -1,6 +1,7 @@
 import { ConnectionForm } from 'renderer/components/connectionForm'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { useEffect, useState } from 'react'
+import ReadingsTable from 'renderer/components/readings-table'
 
 export function MainScreen() {
   const [version, setVersion] = useState(0)
@@ -33,7 +34,9 @@ export function MainScreen() {
           <ConnectionForm />
         </div>
       </TabsContent>
-      <TabsContent value="readings">opa</TabsContent>
+      <TabsContent value="readings">
+        <ReadingsTable />
+      </TabsContent>
       <span className="text-center my-2 text-sm text-muted-foreground">
         v{version}
       </span>
