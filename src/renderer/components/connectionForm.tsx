@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   type ConnectionFormType,
-  EquipmentProps,
+  type EquipmentProps,
   connectionFormSchema,
 } from 'shared/types'
 import {
@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { useQuery } from '@tanstack/react-query'
@@ -23,7 +23,40 @@ import { queryClient } from '../lib/react-query'
 
 export function ConnectionForm() {
   const [equipment, setEquipment] = useState<string | null>()
-  // const [ports, setPorts] = useState<string[]>([])
+
+  const { data: ports, isFetching: isFetchingPorts } = useQuery({
+    queryKey: ['fetchPorts'],
+    queryFn: async () => {
+      const response = await window.App.fetchPorts()
+      return response
+    },
+  })
+
+  const { data: equipmentsConfig } = useQuery({
+    queryKey: ['fetchEquipmentsConfig'],
+    queryFn: async () => {
+      const all = Object.values(
+        (await window.App.fetchEquipmentsConfig()).equipments
+      )
+      return all as EquipmentProps[]
+    },
+  })
+
+  const uniqueEquipmentList = useMemo(() => {
+    if (!equipmentsConfig) return []
+    return Array.from(new Map(equipmentsConfig.map(e => [e.name, e])).values())
+  }, [equipmentsConfig])
+
+  const firmwares = useMemo(() => {
+    if (!equipmentsConfig || !equipment) return []
+    return equipmentsConfig.filter(e => e.name === equipment)
+  }, [equipmentsConfig, equipment])
+
+  useEffect(() => {
+    //@ts-ignore
+    setValue('firmwareVersion', undefined)
+  }, [equipment])
+
   const {
     register,
     setValue,
@@ -44,21 +77,31 @@ export function ConnectionForm() {
     console.log(data)
   }
 
-  const { data: ports, isFetching: isFetchingPorts } = useQuery({
-    queryKey: ['fetchPorts'],
-    queryFn: async () => {
-      const response = await window.App.fetchPorts()
-      return response
-    },
-  })
-  const { data: equipmentConfig, isFetching: isFetchingEquipmentConfig } =
-    useQuery({
-      queryKey: ['fetchEquipmentsConfig'],
-      queryFn: async () => {
-        const equipmentConfig = await window.App.fetchEquipmentsConfig()
-        return Object.values(equipmentConfig.equipments)
-      },
-    })
+  // const { data: equipments, isFetching: isFetchingEquipmentConfig } = useQuery({
+  //   queryKey: ['fetchEquipmentsConfig'],
+  //   queryFn: async () => {
+  //     const equipmentsConfig = Object.values(
+  //       (await window.App.fetchEquipmentsConfig()).equipments
+  //     )
+
+  //     const uniqueEquipment = Array.from(
+  //       new Map(
+  //         equipmentsConfig.map(equipmentConfig => [
+  //           equipmentConfig.name,
+  //           equipmentConfig,
+  //         ])
+  //       ).values()
+  //     )
+
+  //     const availableFirmwares = equipmentsConfig?.filter(
+  //       equipmentConfig => equipmentConfig.name !== equipment
+  //     )
+  //     console.log(availableFirmwares)
+  //     setFirmwares(availableFirmwares)
+
+  //     return uniqueEquipment
+  //   },
+  // })
 
   return (
     <form
@@ -74,6 +117,9 @@ export function ConnectionForm() {
               onValueChange={equipment => {
                 setValue('equipment', equipment)
                 setEquipment(equipment)
+                queryClient.invalidateQueries({
+                  queryKey: ['fetchEquipmentsConfig'],
+                })
               }}
             >
               <SelectTrigger className="w-[220px] bg-card border-muted-foreground">
@@ -82,7 +128,7 @@ export function ConnectionForm() {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel className="">Linha Black</SelectLabel>
-                  {equipmentConfig?.map(equipment => {
+                  {uniqueEquipmentList?.map(equipment => {
                     return (
                       <SelectItem key={equipment.id} value={equipment.name}>
                         {equipment.name.toUpperCase()}
@@ -108,7 +154,16 @@ export function ConnectionForm() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="tm">1.00 r0 - 1.02 r6</SelectItem>
+                  {firmwares?.map(firmware => {
+                    return (
+                      <SelectItem
+                        key={firmware.version}
+                        value={firmware.version}
+                      >
+                        {firmware.version}
+                      </SelectItem>
+                    )
+                  })}
                 </SelectGroup>
               </SelectContent>
             </Select>
