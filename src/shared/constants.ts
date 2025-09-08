@@ -23,7 +23,11 @@ export const IPC = {
     FETCH: 'csv: fetch',
   },
   CONNECT: {
+    FETCH: 'connect: fetch',
     CREATE: 'connect: create',
     DELETE: 'connect: delete',
+  },
+  READING: {
+    UPDATE: 'reading: update',
   },
 }

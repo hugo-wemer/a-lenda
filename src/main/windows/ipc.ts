@@ -1,4 +1,4 @@
-import { app, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { listPorts } from './lib/list-ports'
 import { IPC } from 'shared/constants'
 import { getConfigFile, updateCsvFile } from './lib/s3-client'
@@ -7,11 +7,13 @@ import type {
   ConnectionCloseResponse,
   ConnectionCreateResponse,
   ConnectionFormType,
+  FetchConnectionResponse,
   FetchCsvRequest,
 } from 'shared/types'
 import path from 'node:path'
 import { organizeCsvInBlocks, readCsv } from './lib/csv-parsing'
 import ModbusRTU from 'modbus-serial'
+import { readModbus } from './lib/read-modbus'
 
 let client: ModbusRTU | null = null
 let csv: any[]
@@ -65,6 +67,7 @@ ipcMain.handle(IPC.CSV.FETCH, async (_, req: FetchCsvRequest): Promise<any> => {
 ipcMain.handle(
   IPC.CONNECT.CREATE,
   async (_, req: ConnectionFormType): Promise<ConnectionCreateResponse> => {
+    let isSuccess = false
     try {
       const blocks = organizeCsvInBlocks(csv)
       client = new ModbusRTU()
@@ -76,9 +79,18 @@ ipcMain.handle(
       })
       client.setTimeout(req.timeout)
       client.setID(req.address)
-      return { isSuccess: true }
+      isSuccess = true
+      return { isSuccess }
     } catch (error) {
-      return { isSuccess: false, message: error as Error }
+      isSuccess = false
+      return { isSuccess, message: error as Error }
+    } finally {
+      if (isSuccess) {
+        store.set('connectedIED', req)
+        const win = BrowserWindow.getAllWindows()[0]
+        // readModbus(blocks[0])
+        win.webContents.send(IPC.READING.UPDATE, 'readingCounter')
+      }
     }
   }
 )
@@ -88,9 +100,31 @@ ipcMain.handle(
   async (): Promise<ConnectionCloseResponse> => {
     try {
       client?.close()
+      store.delete('connectedIED')
       return { isSuccess: true }
     } catch (error) {
       return { isSuccess: false, message: error as Error }
     }
   }
 )
+
+ipcMain.handle(
+  IPC.CONNECT.FETCH,
+  async (): Promise<FetchConnectionResponse> => {
+    const response = {
+      isConnected: !!client?.isOpen,
+      connectedIED: store.get('connectedIED'),
+    }
+    return response
+  }
+)
+
+// app.whenReady().then(() => {
+//   let readingCounter = 0
+//   setInterval(() => {
+//     readingCounter += 1
+//     const win = BrowserWindow.getAllWindows()[0]
+//     if (!win || win.isDestroyed()) return
+//     win.webContents.send(IPC.READING.UPDATE, readingCounter)
+//   }, 2000)
+// })

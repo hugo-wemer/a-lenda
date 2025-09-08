@@ -1,8 +1,9 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 import { IPC } from 'shared/constants'
 import type {
   ConnectionCloseResponse,
   ConnectionCreateResponse,
+  FetchConnectionResponse,
   FetchCsvRequest,
   PortsType,
   StoreType,
@@ -35,6 +36,16 @@ const API = {
   },
   deleteConnection(): Promise<ConnectionCloseResponse> {
     return ipcRenderer.invoke(IPC.CONNECT.DELETE)
+  },
+
+  fetchConnection(): Promise<FetchConnectionResponse> {
+    return ipcRenderer.invoke(IPC.CONNECT.FETCH)
+  },
+
+  onReadingUpdate(callback: (value: number) => void) {
+    const listener = (_e: IpcRendererEvent, value: number) => callback(value)
+    ipcRenderer.on(IPC.READING.UPDATE, listener)
+    return () => ipcRenderer.removeListener(IPC.READING.UPDATE, listener)
   },
 }
 

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Badge } from './ui/badge'
 import {
   Table,
@@ -10,7 +11,7 @@ import {
 
 const registers = [
   {
-    id: '9c363158b21f4fcfa9402fe6c2bc7531',
+    id: '2c363158b21f4fcfa9402fe6c2bc7531',
     readSuccess: true,
     mode: 'R',
     descriptionPt: 'Status do alarme de ruptura da membrana ',
@@ -39,9 +40,16 @@ const registers = [
   },
 ]
 
-export default function ReadingsTable() {
+export function ReadingsTable() {
+  // useEffect(() => {
+  //   const unsubscribe = window.App.onReadingUpdate(value => {
+  //     console.log('[reading:update]', value)
+  //   })
+  // }, [])
+
   return (
     <div>
+      {/* <button onClick={() => window.App.onReadingUpdate()}>Inicio</button> */}
       <div className="bg-card overflow-hidden rounded-md border border-muted-foreground">
         <Table>
           <TableHeader className="">

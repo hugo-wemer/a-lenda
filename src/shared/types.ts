@@ -53,6 +53,7 @@ export type EquipmentProps = {
 export interface StoreType {
   version: number
   equipments: Record<string, EquipmentProps>
+  connectedIED?: ConnectionFormType
 }
 
 export interface FetchCsvRequest {
@@ -137,4 +138,9 @@ export interface ConnectionCreateResponse {
 export interface ConnectionCloseResponse {
   isSuccess: boolean
   message?: Error
+}
+
+export interface FetchConnectionResponse {
+  isConnected: boolean
+  connectedIED?: ConnectionFormType
 }

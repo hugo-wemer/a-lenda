@@ -1,7 +1,7 @@
 import { ConnectionForm } from 'renderer/components/connectionForm'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { useEffect, useState } from 'react'
-import ReadingsTable from 'renderer/components/readings-table'
+import { ReadingsTable } from 'renderer/components/readings-table'
 
 export function MainScreen() {
   const [version, setVersion] = useState(0)
