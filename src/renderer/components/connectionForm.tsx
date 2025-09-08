@@ -80,6 +80,9 @@ export function ConnectionForm() {
   } = useForm<ConnectionFormType>({
     resolver: zodResolver(connectionFormSchema),
     defaultValues: {
+      equipment: '',
+      firmwareVersion: '',
+      port: '',
       address: 247,
       baudrate: 9600,
       dataBits: 8,
@@ -108,12 +111,12 @@ export function ConnectionForm() {
   }, [connectedIED, reset])
 
   // Para persistir os campos no formulário enquanto conectado
-  const selectedEquipment = watch('equipment')
-  const selectedFirmware = watch('firmwareVersion')
-  const selectedPort = watch('port')
-  const selectedBaudrate = watch('baudrate')
-  const selectedParity = watch('parity')
-  const selectedStopbits = watch('stopBits')
+  const selectedEquipment = watch('equipment') ?? ''
+  const selectedFirmware = watch('firmwareVersion') ?? ''
+  const selectedPort = watch('port') ?? ''
+  const selectedBaudrate = String(watch('baudrate') ?? '')
+  const selectedParity = watch('parity') ?? 'none'
+  const selectedStopbits = String(watch('stopBits') ?? '')
 
   const { mutateAsync: createConnection, isPending: isConnecting } =
     useMutation({
@@ -177,7 +180,7 @@ export function ConnectionForm() {
               disabled={connectionStatus.isConnected}
               value={selectedEquipment}
               onValueChange={equipment => {
-                setValue('equipment', equipment)
+                setValue('equipment', equipment, { shouldDirty: true })
                 setEquipment(equipment)
                 queryClient.invalidateQueries({
                   queryKey: ['fetchEquipmentsConfig'],
@@ -209,7 +212,9 @@ export function ConnectionForm() {
               value={selectedFirmware}
               disabled={!equipment || connectionStatus.isConnected}
               onValueChange={firmwareVersion => {
-                setValue('firmwareVersion', firmwareVersion)
+                setValue('firmwareVersion', firmwareVersion, {
+                  shouldDirty: true,
+                })
               }}
             >
               <SelectTrigger className="w-[220px] bg-card border-muted-foreground">
@@ -343,7 +348,9 @@ export function ConnectionForm() {
                 value={selectedParity}
                 defaultValue="none"
                 onValueChange={parity => {
-                  setValue('parity', parity as ConnectionFormType['parity'])
+                  setValue('parity', parity as ConnectionFormType['parity'], {
+                    shouldDirty: true,
+                  })
                 }}
               >
                 <SelectTrigger className="w-[110px] bg-card border-muted-foreground">

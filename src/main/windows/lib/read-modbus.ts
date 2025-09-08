@@ -1,5 +1,8 @@
 import type { BlockProps } from 'shared/types'
 
 export function readModbus(block: BlockProps) {
-  return 'reaModbus teste'
+  setInterval(() => {
+    console.log('$$$$$$$$$$$$$$$$$$$$')
+    return 'teste teste teste'
+  }, 2000)
 }

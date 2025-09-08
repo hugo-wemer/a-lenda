@@ -4,6 +4,7 @@ import { IPC } from 'shared/constants'
 import { getConfigFile, updateCsvFile } from './lib/s3-client'
 import { store } from './lib/store'
 import type {
+  BlockProps,
   ConnectionCloseResponse,
   ConnectionCreateResponse,
   ConnectionFormType,
@@ -68,8 +69,8 @@ ipcMain.handle(
   IPC.CONNECT.CREATE,
   async (_, req: ConnectionFormType): Promise<ConnectionCreateResponse> => {
     let isSuccess = false
+    const blocks = organizeCsvInBlocks(csv)
     try {
-      const blocks = organizeCsvInBlocks(csv)
       client = new ModbusRTU()
       await client.connectRTUBuffered(req.port, {
         baudRate: req.baudrate,
@@ -89,7 +90,7 @@ ipcMain.handle(
         store.set('connectedIED', req)
         const win = BrowserWindow.getAllWindows()[0]
         // readModbus(blocks[0])
-        win.webContents.send(IPC.READING.UPDATE, 'readingCounter')
+        win.webContents.send(IPC.READING.UPDATE, readModbus(blocks[0]))
       }
     }
   }

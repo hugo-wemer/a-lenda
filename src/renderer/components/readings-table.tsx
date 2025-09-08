@@ -41,11 +41,11 @@ const registers = [
 ]
 
 export function ReadingsTable() {
-  // useEffect(() => {
-  //   const unsubscribe = window.App.onReadingUpdate(value => {
-  //     console.log('[reading:update]', value)
-  //   })
-  // }, [])
+  useEffect(() => {
+    window.App.onReadingUpdate(value => {
+      console.log(value)
+    })
+  }, [])
 
   return (
     <div>
