@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Badge } from './ui/badge'
 import {
   Table,
@@ -41,16 +41,23 @@ const registers = [
 ]
 
 export function ReadingsTable() {
+  const [lastReading, setLastReading] = useState<any>(null)
+
   useEffect(() => {
-    window.App.onReadingUpdate(value => {
-      console.log(value)
-    })
+    const off = window.App.onReadingUpdate((p: any) => setLastReading(p))
+    return () => off()
   }, [])
+  // useEffect(() => {
+  //   window.App.onReadingUpdate(value => {
+  //     console.log(value)
+  //   })
+  // }, [])
 
   return (
     <div>
       {/* <button onClick={() => window.App.onReadingUpdate()}>Inicio</button> */}
       <div className="bg-card overflow-hidden rounded-md border border-muted-foreground">
+        {lastReading}
         <Table>
           <TableHeader className="">
             <TableRow className="bg-muted/50 hover:bg-transparent">

@@ -9,6 +9,8 @@ import type {
   StoreType,
 } from 'shared/types'
 
+type Unsubscribe = () => void
+
 declare global {
   interface Window {
     App: typeof API
@@ -42,11 +44,17 @@ const API = {
     return ipcRenderer.invoke(IPC.CONNECT.FETCH)
   },
 
-  onReadingUpdate(callback: (value: number) => void) {
-    const listener = (_e: IpcRendererEvent, value: number) => callback(value)
+  onReadingUpdate(callback: (payload: any) => void): Unsubscribe {
+    const listener = (_e: IpcRendererEvent, payload: any) => callback(payload)
     ipcRenderer.on(IPC.READING.UPDATE, listener)
-    // return () => ipcRenderer.removeListener(IPC.READING.UPDATE, listener)
+    return () => ipcRenderer.removeListener(IPC.READING.UPDATE, listener)
   },
+
+  // onReadingUpdate(callback: (value: number) => void) {
+  //   const listener = (_e: IpcRendererEvent, value: number) => callback(value)
+  //   ipcRenderer.on(IPC.READING.UPDATE, listener)
+  //   return () => ipcRenderer.removeListener(IPC.READING.UPDATE, listener)
+  // },
 }
 
 contextBridge.exposeInMainWorld('App', API)

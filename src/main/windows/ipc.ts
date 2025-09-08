@@ -18,10 +18,38 @@ import { readModbus } from './lib/read-modbus'
 
 let client: ModbusRTU | null = null
 let csv: any[]
+let isReading = false
+let readTimer: NodeJS.Timeout | null = null
 
 export function getUserDataDir() {
   const base = app.getPath('userData')
   return path.join(base, 'maps')
+}
+
+function startReading(win: Electron.BrowserWindow) {
+  if (isReading) return
+  isReading = true
+
+  readModbus(1)
+    .then(payload => win.webContents.send(IPC.READING.UPDATE, payload))
+    .catch(() => {})
+
+  let i = 0
+  readTimer = setInterval(async () => {
+    try {
+      const payload = await readModbus(i)
+      win.webContents.send(IPC.READING.UPDATE, payload)
+      i = i + 1
+    } catch (err) {}
+  }, 2000)
+}
+
+function stopReading() {
+  if (readTimer) {
+    clearInterval(readTimer)
+    readTimer = null
+  }
+  isReading = false
 }
 
 ipcMain.handle(IPC.APP_VERSION.UPDATE, async (): Promise<any> => {
@@ -88,9 +116,9 @@ ipcMain.handle(
     } finally {
       if (isSuccess) {
         store.set('connectedIED', req)
+
         const win = BrowserWindow.getAllWindows()[0]
-        // readModbus(blocks[0])
-        win.webContents.send(IPC.READING.UPDATE, readModbus(blocks[0]))
+        startReading(win)
       }
     }
   }
@@ -100,6 +128,7 @@ ipcMain.handle(
   IPC.CONNECT.DELETE,
   async (): Promise<ConnectionCloseResponse> => {
     try {
+      stopReading()
       client?.close()
       store.delete('connectedIED')
       return { isSuccess: true }
@@ -119,6 +148,8 @@ ipcMain.handle(
     return response
   }
 )
+
+// app.on('before-quit', () => (stopReading() client?.close()))
 
 // app.whenReady().then(() => {
 //   let readingCounter = 0

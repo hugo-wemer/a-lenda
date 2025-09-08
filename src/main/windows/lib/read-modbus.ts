@@ -1,8 +1,7 @@
 import type { BlockProps } from 'shared/types'
 
-export function readModbus(block: BlockProps) {
-  setInterval(() => {
-    console.log('$$$$$$$$$$$$$$$$$$$$')
-    return 'teste teste teste'
-  }, 2000)
+export async function readModbus(
+  num: number /*block: BlockProps, stopReading: boolean*/
+) {
+  return num
 }
