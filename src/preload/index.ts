@@ -49,12 +49,6 @@ const API = {
     ipcRenderer.on(IPC.READING.UPDATE, listener)
     return () => ipcRenderer.removeListener(IPC.READING.UPDATE, listener)
   },
-
-  // onReadingUpdate(callback: (value: number) => void) {
-  //   const listener = (_e: IpcRendererEvent, value: number) => callback(value)
-  //   ipcRenderer.on(IPC.READING.UPDATE, listener)
-  //   return () => ipcRenderer.removeListener(IPC.READING.UPDATE, listener)
-  // },
 }
 
 contextBridge.exposeInMainWorld('App', API)

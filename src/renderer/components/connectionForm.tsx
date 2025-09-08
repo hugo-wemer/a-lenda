@@ -52,11 +52,6 @@ export function ConnectionForm() {
     return Array.from(new Map(equipmentsConfig.map(e => [e.name, e])).values())
   }, [equipmentsConfig])
 
-  const firmwares = useMemo(() => {
-    if (!equipmentsConfig || !equipment) return []
-    return equipmentsConfig.filter(e => e.name === equipment)
-  }, [equipmentsConfig, equipment])
-
   useEffect(() => {
     //@ts-ignore
     setValue('firmwareVersion', undefined)
@@ -80,8 +75,8 @@ export function ConnectionForm() {
   } = useForm<ConnectionFormType>({
     resolver: zodResolver(connectionFormSchema),
     defaultValues: {
-      equipment: '',
-      firmwareVersion: '',
+      // equipment: '',
+      // firmwareVersion: '',
       port: '',
       address: 247,
       baudrate: 9600,
@@ -111,12 +106,18 @@ export function ConnectionForm() {
   }, [connectedIED, reset])
 
   // Para persistir os campos no formulário enquanto conectado
-  const selectedEquipment = watch('equipment') ?? ''
-  const selectedFirmware = watch('firmwareVersion') ?? ''
+  const selectedEquipment = watch('equipment')
+  const selectedFirmware = watch('firmwareVersion')
   const selectedPort = watch('port') ?? ''
   const selectedBaudrate = String(watch('baudrate') ?? '')
   const selectedParity = watch('parity') ?? 'none'
   const selectedStopbits = String(watch('stopBits') ?? '')
+
+  const firmwares = useMemo(() => {
+    setValue('firmwareVersion', '')
+    if (!equipmentsConfig || !equipment) return []
+    return equipmentsConfig.filter(e => e.name === equipment)
+  }, [equipmentsConfig, equipment])
 
   const { mutateAsync: createConnection, isPending: isConnecting } =
     useMutation({

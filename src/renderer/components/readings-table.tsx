@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
+import type { BlockProps } from 'shared/types'
 
 const registers = [
   {
@@ -41,23 +42,20 @@ const registers = [
 ]
 
 export function ReadingsTable() {
-  const [lastReading, setLastReading] = useState<any>(null)
+  const [lastReading, setLastReading] = useState<any>()
 
   useEffect(() => {
     const off = window.App.onReadingUpdate((p: any) => setLastReading(p))
     return () => off()
   }, [])
-  // useEffect(() => {
-  //   window.App.onReadingUpdate(value => {
-  //     console.log(value)
-  //   })
-  // }, [])
+
+  console.log(lastReading)
 
   return (
     <div>
       {/* <button onClick={() => window.App.onReadingUpdate()}>Inicio</button> */}
+      {/* <pre>{lastReading.toString()}</pre> */}
       <div className="bg-card overflow-hidden rounded-md border border-muted-foreground">
-        {lastReading}
         <Table>
           <TableHeader className="">
             <TableRow className="bg-muted/50 hover:bg-transparent">

@@ -15,6 +15,7 @@ import path from 'node:path'
 import { organizeCsvInBlocks, readCsv } from './lib/csv-parsing'
 import ModbusRTU from 'modbus-serial'
 import { readModbus } from './lib/read-modbus'
+import { arrangePoints } from './lib/arrange-points'
 
 let client: ModbusRTU | null = null
 let csv: any[]
@@ -26,22 +27,25 @@ export function getUserDataDir() {
   return path.join(base, 'maps')
 }
 
-function startReading(win: Electron.BrowserWindow) {
+function startReading(win: Electron.BrowserWindow, blocks: BlockProps[]) {
   if (isReading) return
   isReading = true
 
-  readModbus(1)
-    .then(payload => win.webContents.send(IPC.READING.UPDATE, payload))
-    .catch(() => {})
+  // readModbus(blocks[0], client)
+  //   .then(payload => win.webContents.send(IPC.READING.UPDATE, payload))
+  //   .catch(() => {})
 
   let i = 0
   readTimer = setInterval(async () => {
     try {
-      const payload = await readModbus(i)
-      win.webContents.send(IPC.READING.UPDATE, payload)
+      const payload = await readModbus(blocks[i], client)
+      win.webContents.send(IPC.READING.UPDATE, blocks[i])
+      arrangePoints(blocks[i], payload)
+    } catch (err) {
+    } finally {
       i = i + 1
-    } catch (err) {}
-  }, 2000)
+    }
+  }, 500)
 }
 
 function stopReading() {
@@ -116,9 +120,8 @@ ipcMain.handle(
     } finally {
       if (isSuccess) {
         store.set('connectedIED', req)
-
         const win = BrowserWindow.getAllWindows()[0]
-        startReading(win)
+        startReading(win, blocks)
       }
     }
   }
@@ -149,7 +152,10 @@ ipcMain.handle(
   }
 )
 
-// app.on('before-quit', () => (stopReading() client?.close()))
+app.on('before-quit', () => {
+  stopReading()
+  client?.close()
+})
 
 // app.whenReady().then(() => {
 //   let readingCounter = 0

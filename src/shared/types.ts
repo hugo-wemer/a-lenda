@@ -144,3 +144,17 @@ export interface FetchConnectionResponse {
   isConnected: boolean
   connectedIED?: ConnectionFormType
 }
+
+export interface RegisterReadingResponse {
+  id: string
+  mode: string
+  outOfLimit: boolean
+  ptUnit: string
+  enUnit: string
+  ptDescription: string
+  enDescription: string
+  ptValue: string
+  enValue: string
+  ptGroup: string
+  enGroup: string
+}
