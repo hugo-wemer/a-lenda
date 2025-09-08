@@ -1,6 +1,12 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IPC } from 'shared/constants'
-import type { FetchCsvRequest, PortsType, StoreType } from 'shared/types'
+import type {
+  ConnectionCloseResponse,
+  ConnectionCreateResponse,
+  FetchCsvRequest,
+  PortsType,
+  StoreType,
+} from 'shared/types'
 
 declare global {
   interface Window {
@@ -23,6 +29,12 @@ const API = {
   },
   fetchCsv(req: FetchCsvRequest): Promise<any> {
     return ipcRenderer.invoke(IPC.CSV.FETCH, req)
+  },
+  createConnection(req: any): Promise<ConnectionCreateResponse> {
+    return ipcRenderer.invoke(IPC.CONNECT.CREATE, req)
+  },
+  deleteConnection(): Promise<ConnectionCloseResponse> {
+    return ipcRenderer.invoke(IPC.CONNECT.DELETE)
   },
 }
 

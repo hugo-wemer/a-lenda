@@ -24,6 +24,11 @@ export const connectionFormSchema = z.object({
     .string({ error: 'Campo requerido' })
     .min(1, 'Campo requerido'),
   port: z.string({ error: 'Campo requerido' }).min(1, 'Campo requerido'),
+  address: z
+    .number()
+    .int()
+    .min(0, 'Selecione endereço válido')
+    .max(65534, 'Selecione endereço válido'),
   baudrate: z.number().int().min(110, 'Selecione um baudrate válido'),
   dataBits: z.number().int().min(5, 'Mínimo 5').max(8, 'Máximo 8'),
   parity: z.enum(['none', 'even', 'odd']),
@@ -97,4 +102,39 @@ export interface CsvProps {
   'IEC 61850': string
   Link: string
   CDC: string
+}
+
+export interface BlockProps {
+  block: {
+    initial: number
+    quantity: number
+  }
+  registers: {
+    id: string
+    mode: string
+    treatment: string
+    lowLimit: string | null
+    highLimit: string | null
+    defaultValue: string | null
+    divisor: string
+    ptUnit: string | null
+    enUnit: string | null
+    ptConversion: string | null
+    enConversion: string | null
+    ptDescription: string
+    enDescription: string
+    ptGroup: string | null
+    enGroup: string | null
+  }[]
+  table: string
+  type: string
+}
+
+export interface ConnectionCreateResponse {
+  isSuccess: boolean
+  message?: Error
+}
+export interface ConnectionCloseResponse {
+  isSuccess: boolean
+  message?: Error
 }

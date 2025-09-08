@@ -65,7 +65,10 @@ export default function ReadingsTable() {
                   {register.descriptionPt}
                 </TableCell>
                 <TableCell className="py-2 font-medium">
-                  <Badge variant="secondary" className="bg-blue-500/20">
+                  <Badge
+                    variant="secondary"
+                    className="bg-foreground/50 text-background"
+                  >
                     {register.groupPt}
                   </Badge>
                 </TableCell>

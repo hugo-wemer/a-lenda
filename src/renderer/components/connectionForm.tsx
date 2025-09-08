@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
+  type ConnectionCreateResponse,
   type ConnectionFormType,
   type EquipmentProps,
   connectionFormSchema,
@@ -17,12 +18,17 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
-import { useQuery } from '@tanstack/react-query'
-import { LoaderCircle } from 'lucide-react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { LoaderCircle, Plug, Unplug } from 'lucide-react'
 import { queryClient } from '../lib/react-query'
 
 export function ConnectionForm() {
   const [equipment, setEquipment] = useState<string | null>()
+  // const [isConnected, setIsConnected] = useState<boolean>(false)
+  const [connectionStatus, setConnectionStatus] = useState<{
+    isConnected: boolean
+    message?: string
+  }>({ isConnected: false })
 
   const { data: ports, isFetching: isFetchingPorts } = useQuery({
     queryKey: ['fetchPorts'],
@@ -63,6 +69,7 @@ export function ConnectionForm() {
   } = useForm<ConnectionFormType>({
     resolver: zodResolver(connectionFormSchema),
     defaultValues: {
+      address: 247,
       baudrate: 9600,
       dataBits: 8,
       parity: 'none',
@@ -71,14 +78,51 @@ export function ConnectionForm() {
     },
   })
 
-  async function handleCreateConnection(data: ConnectionFormType) {
-    // console.log(data)
-    const csv = await window.App.fetchCsv({
-      equipment: data.equipment,
-      firmwareVersion: data.firmwareVersion,
+  const { mutateAsync: createConnection, isPending: isConnecting } =
+    useMutation({
+      mutationFn: async (data: ConnectionFormType) => {
+        const csv = await window.App.fetchCsv({
+          equipment: data.equipment,
+          firmwareVersion: data.firmwareVersion,
+        })
+        const connection = await window.App.createConnection(data)
+        return connection
+      },
+      onSuccess: res => {
+        setConnectionStatus({
+          isConnected: res.isSuccess,
+          message: res.isSuccess
+            ? undefined
+            : 'Falha ao conectar. Verifique a porta de comunicação',
+        })
+      },
     })
-    console.log(csv)
+  const { mutateAsync: closeConnection, isPending: isDisconnecting } =
+    useMutation({
+      mutationFn: async () => {
+        const disconnection = await window.App.deleteConnection()
+        return disconnection
+      },
+      onSuccess: res => {
+        setConnectionStatus({
+          isConnected: !res.isSuccess,
+          message: res.isSuccess
+            ? undefined
+            : 'Falha ao desconectar. Por favor reinicie o programa',
+        })
+      },
+    })
+
+  async function handleCreateConnection(data: ConnectionFormType) {
+    await createConnection(data)
   }
+  async function handleCloseConnection() {
+    await closeConnection()
+  }
+
+  useEffect(() => {
+    handleCloseConnection()
+  }, [])
 
   return (
     <form
@@ -185,6 +229,19 @@ export function ConnectionForm() {
           </div>
           <div className="flex gap-2">
             <div>
+              <span className="text-xs text-foreground/50">Endereço</span>
+              <Input
+                type="number"
+                className="w-full bg-card border-muted-foreground"
+                {...register('address', {
+                  setValueAs: v => (v === '' ? undefined : Number(v)),
+                })}
+              />
+              <span className="text-xs text-destructive">
+                {errors.address?.message}
+              </span>
+            </div>
+            <div>
               <span className="text-xs text-foreground/50">Baudrate</span>
               <Select
                 defaultValue="9600"
@@ -218,7 +275,7 @@ export function ConnectionForm() {
                   setValue('dataBits', Number(dataBits))
                 }}
               >
-                <SelectTrigger className="w-[130px] bg-card border-muted-foreground">
+                <SelectTrigger className="w-[110px] bg-card border-muted-foreground">
                   <SelectValue placeholder="Data bits" />
                 </SelectTrigger>
                 <SelectContent>
@@ -236,7 +293,7 @@ export function ConnectionForm() {
                   setValue('parity', parity as ConnectionFormType['parity'])
                 }}
               >
-                <SelectTrigger className="w-[130px] bg-card border-muted-foreground">
+                <SelectTrigger className="w-[110px] bg-card border-muted-foreground">
                   <SelectValue placeholder="Parity" />
                 </SelectTrigger>
                 <SelectContent>
@@ -259,7 +316,7 @@ export function ConnectionForm() {
                   setValue('stopBits', Number(stopBits))
                 }}
               >
-                <SelectTrigger className="w-[130px] bg-card border-muted-foreground">
+                <SelectTrigger className="w-[110px] bg-card border-muted-foreground">
                   <SelectValue placeholder="Stop bits" />
                 </SelectTrigger>
                 <SelectContent>
@@ -289,9 +346,29 @@ export function ConnectionForm() {
               {errors.timeout?.message}
             </span>
           </div>
-          <Button type="submit" className="mt-2 w-full cursor-pointer">
+          <Button
+            type="submit"
+            className="mt-2 w-full cursor-pointer"
+            hidden={connectionStatus.isConnected}
+            disabled={isConnecting}
+          >
+            <Plug className="size-4" />
             Conectar
           </Button>
+          <Button
+            type="button"
+            onClick={() => handleCloseConnection()}
+            variant={'destructive'}
+            className="my-2 w-full cursor-pointer text-destructive-foreground"
+            hidden={!connectionStatus.isConnected}
+            disabled={isDisconnecting}
+          >
+            <Unplug className="size-4" />
+            Desconectar
+          </Button>
+          <span className="text-xs text-destructive flex justify-center">
+            {connectionStatus.message}
+          </span>
         </div>
       </div>
     </form>

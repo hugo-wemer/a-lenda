@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import { parse } from 'csv-parse'
-import type { CsvProps } from 'shared/types'
+import type { BlockProps, CsvProps } from 'shared/types'
 
 export async function readCsv(path: string) {
   const records = []
@@ -25,41 +25,41 @@ export function organizeCsvInBlocks(csv: CsvProps[]) {
     const table = item['Tabela (Modbus)'].trim()
     if (!tables[table]) {
       tables[table] = {
-        'Tabela (Modbus)': table,
-        'Tipo (Modbus)': item['Tipo (Modbus)'],
-        Bloco: { inicial: Number(item['Registrador (Modbus)']), quantidade: 0 },
-        Registradores: [],
+        table: table,
+        type: item['Tipo (Modbus)'],
+        block: { initial: Number(item['Registrador (Modbus)']), quantity: 0 },
+        registers: [],
       }
     }
 
     const registrador = {
-      UUID: item.UUID,
-      Modo: item.Modo,
-      Tratamento: item.Tratamento,
-      'Limite inferior': item['Limite inferior'],
-      'Limite superior': item['Limite superior'],
-      'Valor default': item['Valor default'],
-      Divisor: item.Divisor,
-      'Unidade pt': item['Unidade pt'],
-      'Unidade en': item['Unidade en'],
-      'Conversão pt': item['Conversão pt'],
-      'Conversão en': item['Conversão en'],
-      'Descrição pt': item['Descrição pt'],
-      'Descrição en': item['Descrição en'],
-      'Grupo pt': item['Grupo pt'],
-      'Grupo en': item['Grupo en'],
+      id: item.UUID,
+      mode: item.Modo,
+      treatment: item.Tratamento,
+      lowLimit: item['Limite inferior'],
+      highLimit: item['Limite superior'],
+      defaultValue: item['Valor default'],
+      divisor: item.Divisor,
+      ptUnit: item['Unidade pt'],
+      enUnit: item['Unidade en'],
+      ptConversion: item['Conversão pt'],
+      enConversion: item['Conversão en'],
+      ptDescription: item['Descrição pt'],
+      enDescription: item['Descrição en'],
+      ptGroup: item['Grupo pt'],
+      enGroup: item['Grupo en'],
     }
 
-    tables[table].Registradores.push(registrador)
+    tables[table].registers.push(registrador)
   }
 
   for (const key in tables) {
-    const inicial = tables[key].Bloco.inicial
+    const initial = tables[key].block.initial
     const maxReg = Math.max(
-      ...tables[key].Registradores.map((_r: any, i: any) => inicial + i)
+      ...tables[key].registers.map((_r: any, i: any) => initial + i)
     )
-    tables[key].Bloco.quantidade = maxReg - inicial + 1
+    tables[key].block.quantity = maxReg - initial + 1
   }
 
-  return Object.values(tables)
+  return Object.values(tables) as BlockProps[]
 }

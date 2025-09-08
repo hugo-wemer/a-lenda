@@ -43,6 +43,7 @@
     "electron-router-dom": "^2.1.0",
     "electron-store": "8.2.0",
     "lucide-react": "^0.477.0",
+    "modbus-serial": "8.0.21-no-serial-port",
     "radix-ui": "^1.4.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
