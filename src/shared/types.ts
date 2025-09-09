@@ -145,16 +145,22 @@ export interface FetchConnectionResponse {
   connectedIED?: ConnectionFormType
 }
 
-export interface RegisterReadingResponse {
+export interface RegisterReadingsResponse {
   id: string
+  readSuccess: boolean
   mode: string
   outOfLimit: boolean
-  ptUnit: string
-  enUnit: string
+  ptUnit?: string | null
+  enUnit?: string | null
   ptDescription: string
   enDescription: string
   ptValue: string
   enValue: string
-  ptGroup: string
-  enGroup: string
+  ptGroup?: string | null
+  enGroup?: string | null
+}
+
+export interface BlockReadingResponse {
+  block: string
+  registers: RegisterReadingsResponse[]
 }

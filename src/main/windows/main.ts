@@ -12,7 +12,7 @@ export async function MainWindow() {
   const window = createWindow({
     id: 'main',
     title: displayName,
-    width: 700,
+    width: 1000,
     height: 600,
     show: false,
     center: true,

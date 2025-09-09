@@ -14,32 +14,40 @@ export function MainScreen() {
   }, [])
 
   return (
-    <Tabs className="h-screen" defaultValue="connection">
-      <TabsList className="text-foreground h-auto gap-2 rounded-none w-screen px-0 py-1 bg-card border-b-1 border-popover justify-start">
-        <TabsTrigger
-          className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+    <div className="flex h-full min-h-0 flex-col">
+      <Tabs
+        className="flex-1 min-h-0 overflow-hidden"
+        defaultValue="connection"
+      >
+        <TabsList className="text-foreground h-auto gap-2 rounded-none px-0 py-1 bg-card border-b-1 border-popover justify-start w-full">
+          <TabsTrigger
+            className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            value="connection"
+          >
+            Conexão
+          </TabsTrigger>
+          <TabsTrigger
+            className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            value="readings"
+          >
+            Leituras
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent
           value="connection"
+          className="data-[state=inactive]:hidden p-0"
         >
-          Conexão
-        </TabsTrigger>
-        <TabsTrigger
-          className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-          value="readings"
-        >
-          Leituras
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent value="connection" className="mx-2">
-        <div className="h-full flex items-center">
-          <ConnectionForm />
-        </div>
-      </TabsContent>
-      <TabsContent value="readings">
-        <ReadingsTable />
-      </TabsContent>
-      <span className="text-center my-2 text-sm text-muted-foreground">
-        v{version}
-      </span>
-    </Tabs>
+          <div className="h-full flex items-center">
+            <ConnectionForm />
+          </div>
+        </TabsContent>
+        <TabsContent value="readings">
+          <ReadingsTable />
+        </TabsContent>
+        <span className="absolute bottom-0 left-1/2 text-center my-2 text-sm text-muted-foreground">
+          v{version}
+        </span>
+      </Tabs>
+    </div>
   )
 }
