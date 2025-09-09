@@ -37,7 +37,7 @@ export function MainScreen() {
           value="connection"
           className="data-[state=inactive]:hidden p-0"
         >
-          <div className="h-full flex items-center">
+          <div className="h-[calc(100vh-105px)] flex items-center">
             <ConnectionForm />
           </div>
         </TabsContent>

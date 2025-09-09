@@ -31,10 +31,6 @@ function startReading(win: Electron.BrowserWindow, blocks: BlockProps[]) {
   if (isReading) return
   isReading = true
 
-  // readModbus(blocks[0], client)
-  //   .then(payload => win.webContents.send(IPC.READING.UPDATE, payload))
-  //   .catch(() => {})
-
   let i = 0
   readTimer = setInterval(async () => {
     try {
@@ -46,6 +42,8 @@ function startReading(win: Electron.BrowserWindow, blocks: BlockProps[]) {
     } catch (err) {
     } finally {
       i = i + 1
+      i >= blocks.length && stopReading()
+      // i = i + 1 >= blocks.length ? 0 : i + 1
     }
   }, 500)
 }
