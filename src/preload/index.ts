@@ -30,7 +30,7 @@ const API = {
   fetchEquipmentsConfig(): Promise<StoreType> {
     return ipcRenderer.invoke(IPC.EQUIPMENTS.FETCH)
   },
-  fetchCsv(req: FetchCsvRequest): Promise<any> {
+  fetchCsv(req: FetchCsvRequest): Promise<any[]> {
     return ipcRenderer.invoke(IPC.CSV.FETCH, req)
   },
   createConnection(req: any): Promise<ConnectionCreateResponse> {

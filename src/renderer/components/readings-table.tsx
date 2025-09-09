@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Badge } from './ui/badge'
 import {
   Table,
   TableBody,
@@ -9,42 +8,10 @@ import {
   TableRow,
 } from './ui/table'
 import type {
-  BlockProps,
   BlockReadingResponse,
   RegisterReadingsResponse,
 } from 'shared/types'
 import { ScrollArea } from './ui/scroll-area'
-
-const registers = [
-  {
-    id: '2c363158b21f4fcfa9402fe6c2bc7531',
-    readSuccess: true,
-    mode: 'R',
-    descriptionPt: 'Status do alarme de ruptura da membrana ',
-    descriptionEn: '',
-    valuePt: '123',
-    valueEn: '123',
-    unitPt: '',
-    unitEn: '',
-    outOfLimit: false,
-    groupPt: 'Diferencial de temperatura do comutador',
-    groupEn: '',
-  },
-  {
-    id: '9c363158b21f4fcfa9402fe6c2bc7531',
-    readSuccess: true,
-    mode: 'R',
-    descriptionPt: 'Status do alarme de ruptura da membrana ',
-    descriptionEn: '',
-    valuePt: '123',
-    valueEn: '123',
-    unitPt: '',
-    unitEn: '',
-    outOfLimit: false,
-    groupPt: 'Diferencial de temperatura do comutador',
-    groupEn: '',
-  },
-]
 
 export function ReadingsTable() {
   const [blocks, setBlocks] = useState<Map<string, RegisterReadingsResponse[]>>(
@@ -60,7 +27,6 @@ export function ReadingsTable() {
     const off = window.App.onReadingUpdate((payload: BlockReadingResponse) => {
       setBlocks(prev => {
         const next = new Map(prev)
-        // se já existia, substitui; se não, adiciona
         next.set(payload.block, payload.registers)
         return next
       })

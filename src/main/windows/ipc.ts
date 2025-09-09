@@ -89,13 +89,15 @@ ipcMain.handle(IPC.EQUIPMENTS.FETCH, async (): Promise<any> => {
   return response
 })
 
-ipcMain.handle(IPC.CSV.FETCH, async (_, req: FetchCsvRequest): Promise<any> => {
-  const destDir = path.join(getUserDataDir(), req.equipment)
-  const finalPath = path.join(destDir, `mapa_${req.firmwareVersion}.csv`)
-  csv = await readCsv(finalPath)
-  const blocks = organizeCsvInBlocks(csv)
-  return csv
-})
+ipcMain.handle(
+  IPC.CSV.FETCH,
+  async (_, req: FetchCsvRequest): Promise<any[]> => {
+    const destDir = path.join(getUserDataDir(), req.equipment)
+    const finalPath = path.join(destDir, `mapa_${req.firmwareVersion}.csv`)
+    csv = await readCsv(finalPath)
+    return csv
+  }
+)
 
 ipcMain.handle(
   IPC.CONNECT.CREATE,
