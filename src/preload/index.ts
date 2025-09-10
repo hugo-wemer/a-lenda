@@ -49,6 +49,13 @@ const API = {
     ipcRenderer.on(IPC.READING.UPDATE, listener)
     return () => ipcRenderer.removeListener(IPC.READING.UPDATE, listener)
   },
+
+  onReadingStatus: (cb: (payload: boolean) => void) => {
+    const listener = (_e: Electron.IpcRendererEvent, payload: boolean) =>
+      cb(payload)
+    ipcRenderer.on(IPC.READING_STATUS.FETCH, listener)
+    return () => ipcRenderer.removeListener(IPC.READING_STATUS.FETCH, listener)
+  },
 }
 
 contextBridge.exposeInMainWorld('App', API)

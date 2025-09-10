@@ -1,4 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
+import type { RegisterReadingsResponse } from 'shared/types'
+import { ScrollArea } from './ui/scroll-area'
+import { Loader2 } from 'lucide-react'
+import { useReadings } from 'renderer/store/readings'
 import {
   Table,
   TableBody,
@@ -7,36 +11,22 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
-import type {
-  BlockReadingResponse,
-  RegisterReadingsResponse,
-} from 'shared/types'
-import { ScrollArea } from './ui/scroll-area'
 
-export function ReadingsTable() {
-  const [blocks, setBlocks] = useState<Map<string, RegisterReadingsResponse[]>>(
-    () => new Map()
-  )
+export function ReadingsTable({
+  isFetchingBlocks,
+}: {
+  isFetchingBlocks: boolean
+}) {
+  const blocks = useReadings(store => store.blocks)
 
-  const lastReading = useMemo(
-    () => Array.from(blocks.values()).flat(),
+  const registers = useMemo(
+    () => Array.from(blocks.values()).flatMap(({ registers }) => registers),
     [blocks]
   )
 
-  useEffect(() => {
-    const off = window.App.onReadingUpdate((payload: BlockReadingResponse) => {
-      setBlocks(prev => {
-        const next = new Map(prev)
-        next.set(payload.block, payload.registers)
-        return next
-      })
-    })
-    return () => off()
-  }, [])
-
   return (
     <div className="flex h-full min-h-0 flex-col p-2">
-      <div className="flex-1 min-h-0 overflow-hidden rounded-md border border-muted-foreground">
+      <div className="relative flex-1 min-h-0 overflow-hidden rounded-md border border-muted-foreground">
         <ScrollArea className="h-[calc(100vh-105px)]">
           <Table className="w-full table-fixed bg-card">
             <colgroup>
@@ -56,7 +46,7 @@ export function ReadingsTable() {
             </TableHeader>
 
             <TableBody>
-              {lastReading.map(register => (
+              {registers.map(register => (
                 <TableRow key={register.id}>
                   <TableCell className="py-2">
                     <div
@@ -82,6 +72,12 @@ export function ReadingsTable() {
             </TableBody>
           </Table>
         </ScrollArea>
+        {isFetchingBlocks && (
+          <div className="absolute bottom-0 bg-gradient-to-t from-background via-background/80 to-background/0 w-full h-30 flex flex-col items-center justify-end py-8 text-muted-foreground">
+            <Loader2 className="animate-spin" />
+            <span className="text-sm">Carregando pontos...</span>
+          </div>
+        )}
       </div>
     </div>
   )

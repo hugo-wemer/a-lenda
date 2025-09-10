@@ -2,16 +2,35 @@ import { ConnectionForm } from 'renderer/components/connectionForm'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { useEffect, useState } from 'react'
 import { ReadingsTable } from 'renderer/components/readings-table'
+import { useReadings } from 'renderer/store/readings'
+import type { BlockReadingResponse } from 'shared/types'
 
 export function MainScreen() {
   const [version, setVersion] = useState(0)
+  const [isFetchingBlocks, setIsFetchingBlocks] = useState(false)
+  const { addBlocks } = useReadings()
+
   useEffect(() => {
-    async function updateVerify() {
+    ;(async () => {
       await window.App.updateApp()
       setVersion(await window.App.fetchAppVersion())
+    })()
+
+    const offUpdate = window.App.onReadingUpdate(
+      (payload: BlockReadingResponse) => {
+        addBlocks(payload)
+      }
+    )
+
+    const offFinished = window.App.onReadingStatus(status => {
+      setIsFetchingBlocks(status)
+    })
+
+    return () => {
+      offUpdate()
+      offFinished()
     }
-    updateVerify()
-  }, [])
+  }, [addBlocks])
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -42,7 +61,7 @@ export function MainScreen() {
           </div>
         </TabsContent>
         <TabsContent value="readings">
-          <ReadingsTable />
+          <ReadingsTable isFetchingBlocks={isFetchingBlocks} />
         </TabsContent>
         <span className="absolute bottom-0 left-1/2 text-center my-2 text-sm text-muted-foreground">
           v{version}

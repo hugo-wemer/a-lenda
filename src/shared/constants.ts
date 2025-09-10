@@ -30,4 +30,7 @@ export const IPC = {
   READING: {
     UPDATE: 'reading: update',
   },
+  READING_STATUS: {
+    FETCH: 'reading status: fetch',
+  },
 }
