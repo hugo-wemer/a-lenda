@@ -80,7 +80,10 @@ export function ReadingsTable({
 
             <TableBody>
               {filtered.map(register => (
-                <TableRow key={register.id}>
+                <TableRow
+                  key={register.id}
+                  // className={`${register.mode === 'RW' && 'cursor-pointer'}`}
+                >
                   <TableCell className="py-2">
                     <div
                       className={`size-2 rounded-full ${
@@ -93,7 +96,9 @@ export function ReadingsTable({
                     {register.ptDescription}
                   </TableCell>
 
-                  <TableCell className="py-2 text-xs">
+                  <TableCell
+                    className={`py-2 text-xs ${register.outOfLimit && 'text-destructive'} ${!register.readSuccess && 'text-muted-foreground'}`}
+                  >
                     {register.ptValue}
                   </TableCell>
 

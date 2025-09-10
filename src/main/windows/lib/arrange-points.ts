@@ -6,10 +6,12 @@ import type {
 
 export function interpretConversion(
   value: string | number,
-  conversion: string | null | undefined
+  conversion: string | null | undefined,
+  divisor: string | number
 ): string {
   if (conversion == null || String(conversion).trim() === '')
-    return value.toString()
+    return (Number(value) / Number(divisor)).toString()
+  // return (value.toString())
   const pairs = conversion.split(/\\+/)
 
   const valueStr = String(value).trim()
@@ -70,7 +72,7 @@ export function arrangePoints(
       mode: register.mode,
       outOfLimit: !!(
         Number(register.lowLimit) > Number(reading[index]) ||
-        Number(register.highLimit) > Number(reading[index])
+        Number(register.highLimit) < Number(reading[index])
       ),
       ptUnit: register.ptUnit,
       enUnit: register.enUnit,
@@ -78,11 +80,13 @@ export function arrangePoints(
       enDescription: register.enDescription,
       ptValue: interpretConversion(
         Number(reading[index]),
-        register.ptConversion
-      ),
+        register.ptConversion,
+        register.divisor
+      ).replace('.', ','),
       enValue: interpretConversion(
         Number(reading[index]),
-        register.enConversion
+        register.enConversion,
+        register.divisor
       ),
       ptGroup: register.ptGroup,
       enGroup: register.enGroup,
