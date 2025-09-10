@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import type { RegisterReadingsResponse } from 'shared/types'
 import { ScrollArea } from './ui/scroll-area'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Search } from 'lucide-react'
 import { useReadings } from 'renderer/store/readings'
 import {
   Table,
@@ -11,6 +11,13 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
+import { Input } from './ui/input'
+
+const normalize = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
 
 export function ReadingsTable({
   isFetchingBlocks,
@@ -18,16 +25,42 @@ export function ReadingsTable({
   isFetchingBlocks: boolean
 }) {
   const blocks = useReadings(store => store.blocks)
+  const [query, setQuery] = useState('')
+  const deferredQuery = useDeferredValue(query)
 
   const registers = useMemo(
     () => Array.from(blocks.values()).flatMap(({ registers }) => registers),
     [blocks]
   )
 
+  const filtered = useMemo(() => {
+    const search = normalize(deferredQuery)
+    if (!search) return registers
+
+    const tokens = search.split(/\s+/).filter(Boolean)
+    return registers.filter(r => {
+      const hay = normalize(
+        `${r.ptDescription ?? ''} ${r.enDescription ?? ''} ${r.ptGroup ?? ''} ${r.enGroup ?? ''}`
+      )
+      return tokens.every(t => hay.includes(t))
+    })
+  }, [registers, deferredQuery])
+
   return (
-    <div className="flex h-full min-h-0 flex-col p-2">
+    <div className="flex h-full min-h-0 flex-col p-2 gap-2">
+      <div>
+        <div>
+          <Input
+            placeholder={'Busque por uma descrição'}
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            onKeyDown={e => e.key === 'Escape' && setQuery('')} // Esc limpa
+            className="pl-3"
+          />
+        </div>
+      </div>
       <div className="relative flex-1 min-h-0 overflow-hidden rounded-md border border-muted-foreground">
-        <ScrollArea className="h-[calc(100vh-105px)]">
+        <ScrollArea className="h-[calc(100vh-140px)]">
           <Table className="w-full table-fixed bg-card">
             <colgroup>
               <col className="w-6" />
@@ -46,7 +79,7 @@ export function ReadingsTable({
             </TableHeader>
 
             <TableBody>
-              {registers.map(register => (
+              {filtered.map(register => (
                 <TableRow key={register.id}>
                   <TableCell className="py-2">
                     <div

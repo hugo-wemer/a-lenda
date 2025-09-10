@@ -21,6 +21,7 @@ let client: ModbusRTU | null = null
 let csv: any[]
 let isReading = false
 let readTimer: NodeJS.Timeout | null = null
+let inFlight = false
 
 export function getUserDataDir() {
   const base = app.getPath('userData')
@@ -34,6 +35,8 @@ function startReading(win: Electron.BrowserWindow, blocks: BlockProps[]) {
   let i = 0
   win.webContents.send(IPC.READING_STATUS.FETCH, true)
   readTimer = setInterval(async () => {
+    if (!isReading || inFlight) return
+    inFlight = true
     try {
       const payload = await readModbus(blocks[i], client)
       win.webContents.send(
@@ -43,6 +46,7 @@ function startReading(win: Electron.BrowserWindow, blocks: BlockProps[]) {
     } catch (err) {
     } finally {
       i = i + 1
+      inFlight = false
       if (i >= blocks.length) {
         stopReading()
         win.webContents.send(IPC.READING_STATUS.FETCH, false)
