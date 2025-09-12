@@ -48,6 +48,8 @@ export function organizeCsvInBlocks(csv: CsvProps[]) {
       enDescription: item['Descrição en'],
       ptGroup: item['Grupo pt'],
       enGroup: item['Grupo en'],
+      ptDisplay: item['Display pt'],
+      enDisplay: item['Display en'],
     }
 
     tables[table].registers.push(registrador)

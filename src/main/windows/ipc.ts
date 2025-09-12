@@ -52,7 +52,7 @@ function startReading(win: Electron.BrowserWindow, blocks: BlockProps[]) {
         win.webContents.send(IPC.READING_STATUS.FETCH, false)
       }
     }
-  }, 500)
+  }, 1)
 }
 
 function stopReading() {

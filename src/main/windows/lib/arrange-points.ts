@@ -58,6 +58,8 @@ export function arrangePoints(
         enValue: 'Undefined',
         ptGroup: register.ptGroup,
         enGroup: register.enGroup,
+        ptDisplay: register.ptDisplay,
+        enDisplay: register.enDisplay,
       })
     })
     return {
@@ -90,6 +92,8 @@ export function arrangePoints(
       ),
       ptGroup: register.ptGroup,
       enGroup: register.enGroup,
+      ptDisplay: register.ptDisplay,
+      enDisplay: register.enDisplay,
     })
   })
 

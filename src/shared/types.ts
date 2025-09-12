@@ -126,6 +126,8 @@ export interface BlockProps {
     enDescription: string
     ptGroup: string | null
     enGroup: string | null
+    ptDisplay: string | null
+    enDisplay: string | null
   }[]
   table: string
   type: string
@@ -158,6 +160,8 @@ export interface RegisterReadingsResponse {
   enValue: string
   ptGroup?: string | null
   enGroup?: string | null
+  ptDisplay: string | null
+  enDisplay: string | null
 }
 
 export interface BlockReadingResponse {

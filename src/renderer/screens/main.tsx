@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { ReadingsTable } from 'renderer/components/readings-table'
 import { useReadings } from 'renderer/store/readings'
 import type { BlockReadingResponse } from 'shared/types'
+import { Settings } from 'renderer/components/settings'
 
 export function MainScreen() {
   const [version, setVersion] = useState(0)
@@ -51,6 +52,12 @@ export function MainScreen() {
           >
             Leituras
           </TabsTrigger>
+          <TabsTrigger
+            className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            value="settings"
+          >
+            Parametrização
+          </TabsTrigger>
         </TabsList>
         <TabsContent
           value="connection"
@@ -62,6 +69,9 @@ export function MainScreen() {
         </TabsContent>
         <TabsContent value="readings">
           <ReadingsTable isFetchingBlocks={isFetchingBlocks} />
+        </TabsContent>
+        <TabsContent value="settings">
+          <Settings />
         </TabsContent>
         <span className="absolute bottom-0 left-1/2 text-center my-2 text-sm text-muted-foreground">
           v{version}
