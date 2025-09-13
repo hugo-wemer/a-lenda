@@ -62,7 +62,13 @@ function filterTree(
   return { pruned, autoExpand }
 }
 
-export function SettinsTree({ registers }: { registers: RegisterReadingsResponse[] }) {
+export function SettinsTree({
+  registers,
+  setSelectedSetting,
+}: {
+  registers: RegisterReadingsResponse[]
+  setSelectedSetting: React.Dispatch<React.SetStateAction<RegisterReadingsResponse | undefined>>
+}) {
   const [query, setQuery] = useState('')
   const deferredQuery = useDeferredValue(query)
   const baseTree = useMemo(() => groupRegistersByPtDisplay(registers), [registers])
@@ -87,7 +93,12 @@ export function SettinsTree({ registers }: { registers: RegisterReadingsResponse
           <li className="my-1.5">
             <ul className="px-2">
               {pruned.map(node => (
-                <Node node={node} key={node.name} />
+                <Node
+                  setSelectedSetting={setSelectedSetting}
+                  node={node}
+                  key={node.name}
+                  path={node.name}
+                />
               ))}
             </ul>
           </li>
@@ -97,11 +108,19 @@ export function SettinsTree({ registers }: { registers: RegisterReadingsResponse
   )
 }
 
-function Node({ node }: { node: MenuNode }) {
+function Node({
+  node,
+  path,
+  setSelectedSetting,
+}: {
+  node: MenuNode
+  path: string
+  setSelectedSetting: React.Dispatch<React.SetStateAction<RegisterReadingsResponse | undefined>>
+}) {
   const [isOpen, setIsOpen] = useState(true)
 
   return (
-    <li key={node.name} className="my-1.5">
+    <li className="my-1.5">
       <div className="flex">
         {node.nodes ? (
           <button
@@ -116,7 +135,25 @@ function Node({ node }: { node: MenuNode }) {
           </button>
         ) : (
           <button
-            onClick={() => console.log(node.register)}
+            onClick={() =>
+              node.register &&
+              setSelectedSetting({
+                enDescription: node.register.enDescription,
+                enDisplay: node.name,
+                enValue: node.register.enValue,
+                id: node.register.id,
+                mode: node.register.mode,
+                outOfLimit: node.register.outOfLimit,
+                ptDescription: node.register.ptDescription,
+                ptDisplay: node.name,
+                ptValue: node.register.ptValue,
+                readSuccess: node.register.readSuccess,
+                enGroup: node.register.enGroup,
+                enUnit: node.register.enUnit,
+                ptGroup: node.register.ptGroup,
+                ptUnit: node.register.ptUnit,
+              })
+            }
             className="flex justify-between w-full ml-4 cursor-pointer hover:bg-muted-foreground pl-2 pr-1 rounded"
           >
             <div className="flex gap-1 items-center">
@@ -130,9 +167,17 @@ function Node({ node }: { node: MenuNode }) {
 
       {isOpen && (
         <ul className="pl-4">
-          {node.nodes?.map(node => (
-            <Node node={node} key={node.name} />
-          ))}
+          {node.nodes?.map(node => {
+            const childPath = `${path}/${node.name}`
+            return (
+              <Node
+                setSelectedSetting={setSelectedSetting}
+                node={node}
+                key={childPath}
+                path={childPath}
+              />
+            )
+          })}
         </ul>
       )}
     </li>

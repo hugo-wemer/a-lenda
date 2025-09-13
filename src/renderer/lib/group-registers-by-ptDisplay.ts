@@ -1,6 +1,6 @@
 import type { RegisterReadingsResponse } from 'shared/types'
 
-type LeafRegister = Omit<RegisterReadingsResponse, 'ptDisplay' | 'enDisplay'>
+export type LeafRegister = Omit<RegisterReadingsResponse, 'ptDisplay' | 'enDisplay'>
 
 export type MenuNode = {
   name: string

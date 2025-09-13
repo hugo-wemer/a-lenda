@@ -166,3 +166,19 @@ export interface BlockReadingResponse {
   block: string
   registers: RegisterReadingsResponse[]
 }
+
+export interface SettingsFetchResponse {
+  options: {
+    value: number
+    conversion: string
+  }[]
+}
+export interface SettingsFetchRequest {
+  uuid: string
+}
+
+export const newSettingSubmitionSchema = z.object({
+  newValue: z.string(),
+})
+
+export type newSettingSubmitionType = z.infer<typeof newSettingSubmitionSchema>

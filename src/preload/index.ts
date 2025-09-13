@@ -6,6 +6,8 @@ import type {
   FetchConnectionResponse,
   FetchCsvRequest,
   PortsType,
+  SettingsFetchRequest,
+  SettingsFetchResponse,
   StoreType,
 } from 'shared/types'
 
@@ -51,10 +53,13 @@ const API = {
   },
 
   onReadingStatus: (cb: (payload: boolean) => void) => {
-    const listener = (_e: Electron.IpcRendererEvent, payload: boolean) =>
-      cb(payload)
+    const listener = (_e: Electron.IpcRendererEvent, payload: boolean) => cb(payload)
     ipcRenderer.on(IPC.READING_STATUS.FETCH, listener)
     return () => ipcRenderer.removeListener(IPC.READING_STATUS.FETCH, listener)
+  },
+
+  fetchSettingOptions(req: SettingsFetchRequest): Promise<SettingsFetchResponse> {
+    return ipcRenderer.invoke(IPC.SETTINGS.FETCH, req)
   },
 }
 

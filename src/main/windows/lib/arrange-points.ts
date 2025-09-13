@@ -1,8 +1,4 @@
-import type {
-  BlockProps,
-  BlockReadingResponse,
-  RegisterReadingsResponse,
-} from 'shared/types'
+import type { BlockProps, BlockReadingResponse, RegisterReadingsResponse } from 'shared/types'
 
 export function interpretConversion(
   value: string | number,
@@ -85,11 +81,7 @@ export function arrangePoints(
         register.ptConversion,
         register.divisor
       ).replace('.', ','),
-      enValue: interpretConversion(
-        Number(reading[index]),
-        register.enConversion,
-        register.divisor
-      ),
+      enValue: interpretConversion(Number(reading[index]), register.enConversion, register.divisor),
       ptGroup: register.ptGroup,
       enGroup: register.enGroup,
       ptDisplay: register.ptDisplay,

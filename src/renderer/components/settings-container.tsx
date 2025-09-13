@@ -1,10 +1,10 @@
 import { useReadings } from 'renderer/store/readings'
-import { useMemo, useState } from 'react'
-import { ScrollArea } from './ui/scroll-area'
-import { Settings, Loader2, Cog } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { Loader2, Cog } from 'lucide-react'
 import { Badge } from './ui/badge'
 import type { RegisterReadingsResponse } from 'shared/types'
 import { SettinsTree } from './ui/settings-tree'
+import { SettingsForm } from './ui/settings-form'
 
 export function SettingsContainer({
   isFetchingBlocks,
@@ -25,18 +25,12 @@ export function SettingsContainer({
           {isFetchingBlocks ? (
             <Loader2 className="animate-spin" />
           ) : (
-            <SettinsTree registers={registers} />
+            <SettinsTree registers={registers} setSelectedSetting={setSelectedSetting} />
           )}
         </div>
         <div className="w-full">
           {selectedSetting?.ptDescription ? (
-            <div>
-              {selectedSetting?.ptGroup && (
-                <Badge className="bg-blue-500 text-blue-50">{selectedSetting?.ptGroup}</Badge>
-              )}
-              <p className="font-semibold text-center">{selectedSetting?.ptDescription}</p>
-              {/* <Input value={selectedSetting?.ptValue} /> */}
-            </div>
+            <SettingsForm setting={selectedSetting} />
           ) : (
             <div className="flex flex-col items-center h-full justify-center gap-4 text-muted-foreground">
               <p className="font-semibold ">

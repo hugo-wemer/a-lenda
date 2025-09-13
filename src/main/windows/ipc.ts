@@ -10,12 +10,15 @@ import type {
   ConnectionFormType,
   FetchConnectionResponse,
   FetchCsvRequest,
+  SettingsFetchRequest,
+  SettingsFetchResponse,
 } from 'shared/types'
 import path from 'node:path'
 import { organizeCsvInBlocks, readCsv } from './lib/csv-parsing'
 import ModbusRTU from 'modbus-serial'
 import { readModbus } from './lib/read-modbus'
 import { arrangePoints } from './lib/arrange-points'
+import { parseConversionString } from './lib/parse-conversion-string'
 
 let client: ModbusRTU | null = null
 let csv: any[]
@@ -39,10 +42,7 @@ function startReading(win: Electron.BrowserWindow, blocks: BlockProps[]) {
     inFlight = true
     try {
       const payload = await readModbus(blocks[i], client)
-      win.webContents.send(
-        IPC.READING.UPDATE,
-        arrangePoints(blocks[i], payload)
-      )
+      win.webContents.send(IPC.READING.UPDATE, arrangePoints(blocks[i], payload))
     } catch (err) {
     } finally {
       i = i + 1
@@ -96,15 +96,12 @@ ipcMain.handle(IPC.EQUIPMENTS.FETCH, async (): Promise<any> => {
   return response
 })
 
-ipcMain.handle(
-  IPC.CSV.FETCH,
-  async (_, req: FetchCsvRequest): Promise<any[]> => {
-    const destDir = path.join(getUserDataDir(), req.equipment)
-    const finalPath = path.join(destDir, `mapa_${req.firmwareVersion}.csv`)
-    csv = await readCsv(finalPath)
-    return csv
-  }
-)
+ipcMain.handle(IPC.CSV.FETCH, async (_, req: FetchCsvRequest): Promise<any[]> => {
+  const destDir = path.join(getUserDataDir(), req.equipment)
+  const finalPath = path.join(destDir, `mapa_${req.firmwareVersion}.csv`)
+  csv = await readCsv(finalPath)
+  return csv
+})
 
 ipcMain.handle(
   IPC.CONNECT.CREATE,
@@ -136,28 +133,34 @@ ipcMain.handle(
   }
 )
 
-ipcMain.handle(
-  IPC.CONNECT.DELETE,
-  async (): Promise<ConnectionCloseResponse> => {
-    try {
-      stopReading()
-      client?.close()
-      store.delete('connectedIED')
-      return { isSuccess: true }
-    } catch (error) {
-      return { isSuccess: false, message: error as Error }
-    }
+ipcMain.handle(IPC.CONNECT.DELETE, async (): Promise<ConnectionCloseResponse> => {
+  try {
+    stopReading()
+    client?.close()
+    store.delete('connectedIED')
+    return { isSuccess: true }
+  } catch (error) {
+    return { isSuccess: false, message: error as Error }
   }
-)
+})
+
+ipcMain.handle(IPC.CONNECT.FETCH, async (): Promise<FetchConnectionResponse> => {
+  const response = {
+    isConnected: !!client?.isOpen,
+    connectedIED: store.get('connectedIED'),
+  }
+  return response
+})
 
 ipcMain.handle(
-  IPC.CONNECT.FETCH,
-  async (): Promise<FetchConnectionResponse> => {
-    const response = {
-      isConnected: !!client?.isOpen,
-      connectedIED: store.get('connectedIED'),
+  IPC.SETTINGS.FETCH,
+  async (_, id: SettingsFetchRequest): Promise<SettingsFetchResponse> => {
+    const options = csv.find(register => register.UUID === id.uuid)
+    const result = parseConversionString(options['Conversão pt'])
+
+    return {
+      options: result,
     }
-    return response
   }
 )
 
@@ -165,13 +168,3 @@ app.on('before-quit', () => {
   stopReading()
   client?.close()
 })
-
-// app.whenReady().then(() => {
-//   let readingCounter = 0
-//   setInterval(() => {
-//     readingCounter += 1
-//     const win = BrowserWindow.getAllWindows()[0]
-//     if (!win || win.isDestroyed()) return
-//     win.webContents.send(IPC.READING.UPDATE, readingCounter)
-//   }, 2000)
-// })

@@ -1,4 +1,4 @@
-import { ConnectionForm } from 'renderer/components/connectionForm'
+import { ConnectionForm } from 'renderer/components/connection-form'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { useEffect, useState } from 'react'
 import { ReadingsTable } from 'renderer/components/readings-table'
