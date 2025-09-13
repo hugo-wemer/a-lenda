@@ -5,23 +5,7 @@ export type MenuNode = {
   children: string[]
 }
 
-export type ParamLeaf = {
-  name: string
-  id: string
-  readSuccess: boolean
-  mode: string
-  outOfLimit: boolean
-  ptUnit?: string | null
-  enUnit?: string | null
-  ptDescription: string
-  enDescription: string
-  ptValue: string
-  enValue: string
-  ptDisplay: string | null
-  enDisplay: string | null
-}
-
-export type ItemsRecord = Record<string, MenuNode | ParamLeaf>
+export type ItemsRecord = Record<string, MenuNode | RegisterReadingsResponse>
 
 function slugify(s: string) {
   return (
@@ -57,9 +41,7 @@ export function registersToTreeAdapter(
       .map(s => s.trim())
       .filter(Boolean)
 
-    const effectivePath = path.length
-      ? path
-      : ['Sem categoria', reg.ptDescription || reg.id]
+    const effectivePath = path.length ? path : ['Sem categoria', reg.ptDescription || reg.id]
 
     const slugParts: string[] = []
     let parentKey = rootKey
@@ -74,9 +56,7 @@ export function registersToTreeAdapter(
       if (!(key in items)) {
         if (isLeaf) {
           items[key] = {
-            name: reg.ptDisplay?.trim()
-              ? reg.ptDisplay
-              : effectivePath.join('/'),
+            name: reg.ptDisplay?.trim() ? reg.ptDisplay : effectivePath.join('/'),
             id: reg.id,
             readSuccess: reg.readSuccess,
             mode: reg.mode,
@@ -89,6 +69,8 @@ export function registersToTreeAdapter(
             enValue: reg.enValue,
             ptDisplay: reg.ptDisplay,
             enDisplay: reg.enDisplay,
+            ptGroup: reg.ptGroup,
+            enGroup: reg.enGroup,
           }
         } else {
           items[key] = {
@@ -100,8 +82,7 @@ export function registersToTreeAdapter(
       } else {
       }
 
-      if (!childrenSets.has(parentKey))
-        childrenSets.set(parentKey, new Set<string>())
+      if (!childrenSets.has(parentKey)) childrenSets.set(parentKey, new Set<string>())
       childrenSets.get(parentKey)?.add(key)
 
       parentKey = key

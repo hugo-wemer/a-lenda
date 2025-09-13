@@ -4,6 +4,8 @@ import { ChevronDownIcon } from 'lucide-react'
 import { Slot } from 'radix-ui'
 
 import { cn } from '../../lib/utils'
+import { Badge } from './badge'
+import type { RegisterReadingsResponse } from 'shared/types'
 
 interface TreeContextValue<T = any> {
   indent: number
@@ -28,9 +30,7 @@ interface TreeProps extends React.HTMLAttributes<HTMLDivElement> {
 
 function Tree({ indent = 20, tree, className, ...props }: TreeProps) {
   const containerProps =
-    tree && typeof tree.getContainerProps === 'function'
-      ? tree.getContainerProps()
-      : {}
+    tree && typeof tree.getContainerProps === 'function' ? tree.getContainerProps() : {}
   const mergedProps = { ...props, ...containerProps }
 
   // Extract style from mergedProps to merge with our custom styles
@@ -47,15 +47,14 @@ function Tree({ indent = 20, tree, className, ...props }: TreeProps) {
       <div
         data-slot="tree"
         style={mergedStyle}
-        className={cn('flex flex-col', className)}
+        className={cn('flex flex-col ', className)}
         {...otherProps}
       />
     </TreeContext.Provider>
   )
 }
 
-interface TreeItemProps<T = any>
-  extends React.HTMLAttributes<HTMLButtonElement> {
+interface TreeItemProps<T = any> extends React.HTMLAttributes<HTMLButtonElement> {
   item: ItemInstance<T>
   indent?: number
   asChild?: boolean
@@ -93,30 +92,16 @@ function TreeItem<T = any>({
           'z-10 ps-(--tree-padding) outline-hidden select-none not-last:pb-0.5 focus:z-20 data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
           className
         )}
-        data-focus={
-          typeof item.isFocused === 'function'
-            ? item.isFocused() || false
-            : undefined
-        }
-        data-folder={
-          typeof item.isFolder === 'function'
-            ? item.isFolder() || false
-            : undefined
-        }
+        data-focus={typeof item.isFocused === 'function' ? item.isFocused() || false : undefined}
+        data-folder={typeof item.isFolder === 'function' ? item.isFolder() || false : undefined}
         data-selected={
-          typeof item.isSelected === 'function'
-            ? item.isSelected() || false
-            : undefined
+          typeof item.isSelected === 'function' ? item.isSelected() || false : undefined
         }
         data-drag-target={
-          typeof item.isDragTarget === 'function'
-            ? item.isDragTarget() || false
-            : undefined
+          typeof item.isDragTarget === 'function' ? item.isDragTarget() || false : undefined
         }
         data-search-match={
-          typeof item.isMatchingSearch === 'function'
-            ? item.isMatchingSearch() || false
-            : undefined
+          typeof item.isMatchingSearch === 'function' ? item.isMatchingSearch() || false : undefined
         }
         aria-expanded={item.isExpanded()}
         {...otherProps}
@@ -127,8 +112,7 @@ function TreeItem<T = any>({
   )
 }
 
-interface TreeItemLabelProps<T = any>
-  extends React.HTMLAttributes<HTMLSpanElement> {
+interface TreeItemLabelProps<T = any> extends React.HTMLAttributes<HTMLSpanElement> {
   item?: ItemInstance<T>
 }
 
@@ -146,11 +130,13 @@ function TreeItemLabel<T = any>({
     return null
   }
 
+  const itemData = item.getItemData() as RegisterReadingsResponse
+
   return (
     <span
       data-slot="tree-item-label"
       className={cn(
-        'in-focus-visible:ring-ring/50 bg-background hover:bg-accent in-data-[selected=true]:bg-accent in-data-[selected=true]:text-accent-foreground in-data-[drag-target=true]:bg-accent flex items-center gap-1 rounded-sm px-2 py-1.5 text-sm transition-colors not-in-data-[folder=true]:ps-7 in-focus-visible:ring-[3px] in-data-[search-match=true]:bg-blue-400/20! [&_svg]:pointer-events-none [&_svg]:shrink-0 ',
+        'in-focus-visible:ring-ring/50 bg-card hover:bg-accent in-data-[selected=true]:bg-accent in-data-[selected=true]:text-accent-foreground in-data-[drag-target=true]:bg-accent flex items-center gap-1 rounded-sm px-2 py-1.5 text-sm transition-colors not-in-data-[folder=true]:ps-7 in-focus-visible:ring-[3px] in-data-[search-match=true]:bg-blue-400/20! [&_svg]:pointer-events-none [&_svg]:shrink-0 ',
         className
       )}
       {...props}
@@ -158,16 +144,17 @@ function TreeItemLabel<T = any>({
       {item.isFolder() && (
         <ChevronDownIcon className="text-muted-foreground size-4 in-aria-[expanded=false]:-rotate-90" />
       )}
-      {children ||
-        (typeof item.getItemName === 'function' ? item.getItemName() : null)}
+      <div className="flex justify-between w-full">
+        {children || (typeof item.getItemName === 'function' ? item.getItemName() : null)}
+        {itemData.ptValue && (
+          <Badge className="bg-muted-foreground text-foreground">{itemData.ptValue}</Badge>
+        )}
+      </div>
     </span>
   )
 }
 
-function TreeDragLine({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+function TreeDragLine({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   const { tree } = useTreeContext()
 
   if (!tree || typeof tree.getDragLineStyle !== 'function') {
@@ -182,7 +169,7 @@ function TreeDragLine({
     <div
       style={dragLine}
       className={cn(
-        'bg-primary before:bg-background before:border-primary absolute z-30 -mt-px h-0.5 w-[unset] before:absolute before:-top-[3px] before:left-0 before:size-2 before:rounded-full before:border-2',
+        'bg-primary before:bg-card before:border-primary absolute z-30 -mt-px h-0.5 w-[unset] before:absolute before:-top-[3px] before:left-0 before:size-2 before:rounded-full before:border-2',
         className
       )}
       {...props}

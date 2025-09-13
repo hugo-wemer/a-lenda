@@ -20,9 +20,7 @@ export interface WindowCreationByIPC {
 
 export const connectionFormSchema = z.object({
   equipment: z.string({ error: 'Campo requerido' }).min(1, 'Campo requerido'),
-  firmwareVersion: z
-    .string({ error: 'Campo requerido' })
-    .min(1, 'Campo requerido'),
+  firmwareVersion: z.string({ error: 'Campo requerido' }).min(1, 'Campo requerido'),
   port: z.string({ error: 'Campo requerido' }).min(1, 'Campo requerido'),
   address: z
     .number()

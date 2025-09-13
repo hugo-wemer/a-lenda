@@ -1,19 +1,11 @@
-import { useDeferredValue, useEffect, useMemo, useState } from 'react'
-import type { RegisterReadingsResponse } from 'shared/types'
+import { useDeferredValue, useMemo, useState } from 'react'
 import { ScrollArea } from './ui/scroll-area'
-import { Loader2, Search } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { useReadings } from 'renderer/store/readings'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from './ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 import { Input } from './ui/input'
 
-const normalize = (s: string) =>
+export const normalize = (s: string) =>
   s
     .toLowerCase()
     .normalize('NFD')
@@ -40,7 +32,7 @@ export function ReadingsTable({
     const tokens = search.split(/\s+/).filter(Boolean)
     return registers.filter(r => {
       const hay = normalize(
-        `${r.ptDescription ?? ''} ${r.enDescription ?? ''} ${r.ptGroup ?? ''} ${r.enGroup ?? ''}`
+        `${r.ptDescription ?? ''} ${r.enDescription ?? ''} ${r.ptDisplay ?? ''} ${r.enDisplay ?? ''}`
       )
       return tokens.every(t => hay.includes(t))
     })
@@ -102,9 +94,7 @@ export function ReadingsTable({
                     {register.ptValue}
                   </TableCell>
 
-                  <TableCell className="py-2 text-xs">
-                    {register.ptUnit}
-                  </TableCell>
+                  <TableCell className="py-2 text-xs">{register.ptUnit}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
