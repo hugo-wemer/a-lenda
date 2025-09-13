@@ -1,13 +1,12 @@
 import { useReadings } from 'renderer/store/readings'
-import { MenuTree } from './menu-tree'
 import { useMemo, useState } from 'react'
 import { ScrollArea } from './ui/scroll-area'
-import { Cog, Loader2 } from 'lucide-react'
+import { Settings, Loader2, Cog } from 'lucide-react'
 import { Badge } from './ui/badge'
-import { Input } from './ui/input'
 import type { RegisterReadingsResponse } from 'shared/types'
+import { SettinsTree } from './ui/settings-tree'
 
-export function Settings({
+export function SettingsContainer({
   isFetchingBlocks,
 }: {
   isFetchingBlocks: boolean
@@ -21,14 +20,14 @@ export function Settings({
 
   return (
     <div className="relative flex-1 min-h-0 flex mx-2">
-      <div className="flex flex-1 h-[calc(100vh-100px)] gap-8">
-        <ScrollArea className="bg-card overflow-hidden rounded-md border border-muted-foreground w-1/2">
+      <div className="flex flex-1  gap-8">
+        <div className=" w-1/2">
           {isFetchingBlocks ? (
             <Loader2 className="animate-spin" />
           ) : (
-            <MenuTree registers={registers} setSelectedSetting={setSelectedSetting} />
+            <SettinsTree registers={registers} />
           )}
-        </ScrollArea>
+        </div>
         <div className="w-full">
           {selectedSetting?.ptDescription ? (
             <div>
@@ -51,19 +50,3 @@ export function Settings({
     </div>
   )
 }
-
-// {
-//     "name": "CONF/GENR/DISP",
-//     "id": "381fa7691cfd4196be0e66207e703e8f",
-//     "readSuccess": true,
-//     "mode": "RW",
-//     "outOfLimit": false,
-//     "ptUnit": "",
-//     "enUnit": "",
-//     "ptDescription": "Parâmetro de rolagem de telas no display",
-//     "enDescription": "Parameter of scrolling screens on the display",
-//     "ptValue": "Alternado",
-//     "enValue": "Toggled",
-//     "ptDisplay": "CONF/GENR/DISP",
-//     "enDisplay": "CONF/GENR/DISP"
-// }
