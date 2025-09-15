@@ -152,8 +152,12 @@ export interface RegisterReadingsResponse {
   outOfLimit: boolean
   ptUnit?: string | null
   enUnit?: string | null
+  divisor: string | null
+  ptConversion?: SettingsFetchResponse | null
+  enConversion?: SettingsFetchResponse | null
   ptDescription: string
   enDescription: string
+  value: string
   ptValue: string
   enValue: string
   ptGroup?: string | null

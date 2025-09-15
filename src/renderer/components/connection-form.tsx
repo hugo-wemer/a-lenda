@@ -1,10 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  type ConnectionFormType,
-  type EquipmentProps,
-  connectionFormSchema,
-} from 'shared/types'
+import { type ConnectionFormType, type EquipmentProps, connectionFormSchema } from 'shared/types'
 import {
   Select,
   SelectContent,
@@ -14,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select'
-import { type Dispatch, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -27,9 +23,7 @@ export function ConnectionForm() {
     isConnected: boolean
     message?: string
   }>({ isConnected: false })
-  const [connectedIED, setConnectedIED] = useState<
-    ConnectionFormType | undefined
-  >()
+  const [connectedIED, setConnectedIED] = useState<ConnectionFormType | undefined>()
 
   const { data: ports, isFetching: isFetchingPorts } = useQuery({
     queryKey: ['fetchPorts'],
@@ -119,40 +113,34 @@ export function ConnectionForm() {
     return equipmentsConfig.filter(e => e.name === equipment)
   }, [equipmentsConfig, equipment])
 
-  const { mutateAsync: createConnection, isPending: isConnecting } =
-    useMutation({
-      mutationFn: async (data: ConnectionFormType) => {
-        const csv = await window.App.fetchCsv({
-          equipment: data.equipment,
-          firmwareVersion: data.firmwareVersion,
-        })
-        const connection = await window.App.createConnection(data)
-        return connection
-      },
-      onSuccess: res => {
-        setConnectionStatus({
-          isConnected: res.isSuccess,
-          message: res.isSuccess
-            ? undefined
-            : 'Falha ao conectar. Verifique a porta de comunicação',
-        })
-      },
-    })
-  const { mutateAsync: closeConnection, isPending: isDisconnecting } =
-    useMutation({
-      mutationFn: async () => {
-        const disconnection = await window.App.deleteConnection()
-        return disconnection
-      },
-      onSuccess: res => {
-        setConnectionStatus({
-          isConnected: !res.isSuccess,
-          message: res.isSuccess
-            ? undefined
-            : 'Falha ao desconectar. Por favor reinicie o programa',
-        })
-      },
-    })
+  const { mutateAsync: createConnection, isPending: isConnecting } = useMutation({
+    mutationFn: async (data: ConnectionFormType) => {
+      const csv = await window.App.fetchCsv({
+        equipment: data.equipment,
+        firmwareVersion: data.firmwareVersion,
+      })
+      const connection = await window.App.createConnection(data)
+      return connection
+    },
+    onSuccess: res => {
+      setConnectionStatus({
+        isConnected: res.isSuccess,
+        message: res.isSuccess ? undefined : 'Falha ao conectar. Verifique a porta de comunicação',
+      })
+    },
+  })
+  const { mutateAsync: closeConnection, isPending: isDisconnecting } = useMutation({
+    mutationFn: async () => {
+      const disconnection = await window.App.deleteConnection()
+      return disconnection
+    },
+    onSuccess: res => {
+      setConnectionStatus({
+        isConnected: !res.isSuccess,
+        message: res.isSuccess ? undefined : 'Falha ao desconectar. Por favor reinicie o programa',
+      })
+    },
+  })
 
   async function handleCreateConnection(data: ConnectionFormType) {
     if (!connectionStatus.isConnected) {
@@ -204,9 +192,7 @@ export function ConnectionForm() {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <span className="text-xs text-destructive">
-              {errors.equipment?.message}
-            </span>
+            <span className="text-xs text-destructive">{errors.equipment?.message}</span>
           </div>
           <div>
             <Select
@@ -233,9 +219,7 @@ export function ConnectionForm() {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <span className="text-xs text-destructive">
-              {errors.firmwareVersion?.message}
-            </span>
+            <span className="text-xs text-destructive">{errors.firmwareVersion?.message}</span>
           </div>
         </div>
       </div>
@@ -277,9 +261,7 @@ export function ConnectionForm() {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <span className="text-xs text-destructive">
-              {errors.port?.message}
-            </span>
+            <span className="text-xs text-destructive">{errors.port?.message}</span>
           </div>
           <div className="flex gap-2">
             <div>
@@ -292,9 +274,7 @@ export function ConnectionForm() {
                   setValueAs: v => (v === '' ? undefined : Number(v)),
                 })}
               />
-              <span className="text-xs text-destructive">
-                {errors.address?.message}
-              </span>
+              <span className="text-xs text-destructive">{errors.address?.message}</span>
             </div>
             <div>
               <span className="text-xs text-foreground/50">Baudrate</span>
@@ -319,9 +299,7 @@ export function ConnectionForm() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <span className="text-xs text-destructive">
-                {errors.baudrate?.message}
-              </span>
+              <span className="text-xs text-destructive">{errors.baudrate?.message}</span>
             </div>
             <div>
               <span className="text-xs text-foreground/50">Databits</span>
@@ -365,9 +343,7 @@ export function ConnectionForm() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <span className="text-xs text-destructive">
-                {errors.parity?.message}
-              </span>
+              <span className="text-xs text-destructive">{errors.parity?.message}</span>
             </div>
             <div>
               <span className="text-xs text-foreground/50">Stopbits</span>
@@ -389,9 +365,7 @@ export function ConnectionForm() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <span className="text-xs text-destructive">
-                {errors.stopBits?.message}
-              </span>
+              <span className="text-xs text-destructive">{errors.stopBits?.message}</span>
             </div>
           </div>
           <div>
@@ -406,9 +380,7 @@ export function ConnectionForm() {
                 setValueAs: v => (v === '' ? undefined : Number(v)),
               })}
             />
-            <span className="text-xs text-destructive">
-              {errors.timeout?.message}
-            </span>
+            <span className="text-xs text-destructive">{errors.timeout?.message}</span>
           </div>
           <Button
             type="submit"

@@ -4,37 +4,51 @@ import {
   type SettingsFetchResponse,
 } from 'shared/types'
 import { Badge } from './badge'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
 import { Input } from './input'
 import { Button } from './button'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-export function SettingsForm({ setting }: { setting: RegisterReadingsResponse }) {
-  const [isLoadingConversion, setIsLoadingConversion] = useState(true)
-  const [settingOptions, setSettingOptions] = useState<SettingsFetchResponse>()
-  const { register, handleSubmit, setValue } = useForm({
+export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) {
+  const { register, handleSubmit, setValue, reset } = useForm({
     resolver: zodResolver(newSettingSubmitionSchema),
+    defaultValues: { newValue: '' },
   })
-  useEffect(() => {
-    let active = true
-    ;(async () => {
-      try {
-        const options = await window.App.fetchSettingOptions({ uuid: setting.id })
-        if (!active) return
-        setSettingOptions(options)
-      } catch (err) {
-        console.error('Erro ao buscar opções:', err)
-      } finally {
-        setIsLoadingConversion(false)
-      }
-    })()
 
-    return () => {
-      active = false
+  const hasOptions = (setting.ptConversion?.options?.length ?? 0) > 0
+
+  const initialValue = useMemo(() => {
+    if (hasOptions) {
+      return String(setting.value)
     }
-  }, [setting.id])
+    if (setting.divisor) {
+      const val = Number(setting.value) / Number(setting.divisor)
+      // ex.: divisor "100" -> 2 casas; ajuste conforme sua regra
+      const casas = String(setting.divisor).length - 1
+      return val.toFixed(Math.max(casas, 0))
+    }
+    return String(setting.value ?? '')
+  }, [hasOptions, setting.value, setting.divisor])
+
+  useEffect(() => {
+    reset({ newValue: initialValue })
+  }, [initialValue, reset])
+
+  useEffect(() => {
+    if (setting.ptConversion?.options.length && setting.ptConversion?.options.length > 0) {
+      setValue('newValue', setting.value.toString())
+      console.log(`PRE SELECIONADO opc: ${setting.value.toString()}`)
+    } else if (setting.divisor) {
+      setValue(
+        'newValue',
+        (Number(setting.value) / Number(setting.divisor))
+          .toFixed(setting.divisor.length - 1)
+          .toString()
+      )
+    }
+  }, [setting])
 
   function handleUpdateSetting(data: any) {
     console.log(data)
@@ -45,19 +59,21 @@ export function SettingsForm({ setting }: { setting: RegisterReadingsResponse })
       {setting.ptGroup && <Badge className="bg-blue-500">{setting.ptGroup}</Badge>}
       <h1 className="font-semibold text-lg text-center">{setting.ptDescription}</h1>
       <form className="space-y-2" onSubmit={handleSubmit(handleUpdateSetting)}>
-        {settingOptions?.options.length !== 0 ? (
+        {setting.ptConversion?.options.length !== 0 ? (
           <Select
-            onValueChange={conversion => {
-              setValue('newValue', conversion)
+            key={setting.id}
+            defaultValue={setting.value.toString()}
+            onValueChange={newValue => {
+              setValue('newValue', newValue)
             }}
           >
             <SelectTrigger className="w-[220px] bg-card border-muted-foreground">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {settingOptions?.options.map(option => {
+              {setting.ptConversion?.options.map(option => {
                 return (
-                  <SelectItem key={option.conversion} value={option.conversion}>
+                  <SelectItem key={option.value} value={option.value.toString()}>
                     {option.conversion}
                   </SelectItem>
                 )

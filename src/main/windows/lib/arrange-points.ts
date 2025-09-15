@@ -1,4 +1,5 @@
 import type { BlockProps, BlockReadingResponse, RegisterReadingsResponse } from 'shared/types'
+import { parseConversionString } from './parse-conversion-string'
 
 export function interpretConversion(
   value: string | number,
@@ -48,8 +49,10 @@ export function arrangePoints(
         outOfLimit: false,
         ptUnit: register.ptUnit,
         enUnit: register.enUnit,
+        divisor: register.divisor,
         ptDescription: register.ptDescription,
         enDescription: register.enDescription,
+        value: '0',
         ptValue: 'Indefinido',
         enValue: 'Undefined',
         ptGroup: register.ptGroup,
@@ -76,12 +79,12 @@ export function arrangePoints(
       enUnit: register.enUnit,
       ptDescription: register.ptDescription,
       enDescription: register.enDescription,
-      ptValue: interpretConversion(
-        Number(reading[index]),
-        register.ptConversion,
-        register.divisor
-      ).replace('.', ','),
+      value: reading[index].toString(),
+      ptValue: interpretConversion(Number(reading[index]), register.ptConversion, register.divisor), //.replace('.', ','),
       enValue: interpretConversion(Number(reading[index]), register.enConversion, register.divisor),
+      divisor: register.divisor,
+      ptConversion: { options: parseConversionString(register.ptConversion || '') },
+      enConversion: { options: parseConversionString(register.enConversion || '') },
       ptGroup: register.ptGroup,
       enGroup: register.enGroup,
       ptDisplay: register.ptDisplay,

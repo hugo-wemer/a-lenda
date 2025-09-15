@@ -1,10 +1,9 @@
 import { useReadings } from 'renderer/store/readings'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Loader2, Cog } from 'lucide-react'
-import { Badge } from './ui/badge'
 import type { RegisterReadingsResponse } from 'shared/types'
 import { SettinsTree } from './ui/settings-tree'
-import { SettingsForm } from './ui/settings-form'
+import { SettingForm } from './ui/setting-form'
 
 export function SettingsContainer({
   isFetchingBlocks,
@@ -21,16 +20,18 @@ export function SettingsContainer({
   return (
     <div className="relative flex-1 min-h-0 flex mx-2">
       <div className="flex flex-1  gap-8">
-        <div className=" w-1/2">
+        <div className="w-1/2">
           {isFetchingBlocks ? (
-            <Loader2 className="animate-spin" />
+            <div className="bg-card h-[calc(100vh-95px)] rounded border border-muted-foreground flex items-center justify-center">
+              <Loader2 className="animate-spin text-muted-foreground" />
+            </div>
           ) : (
             <SettinsTree registers={registers} setSelectedSetting={setSelectedSetting} />
           )}
         </div>
         <div className="w-full">
           {selectedSetting?.ptDescription ? (
-            <SettingsForm setting={selectedSetting} />
+            <SettingForm setting={selectedSetting} />
           ) : (
             <div className="flex flex-col items-center h-full justify-center gap-4 text-muted-foreground">
               <p className="font-semibold ">
