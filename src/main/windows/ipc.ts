@@ -26,6 +26,7 @@ import { writeModbus } from './lib/write-modbus'
 
 let client: ModbusRTU | null = null
 let csv: any[]
+let blocks: any[]
 let isReading = false
 let readTimer: NodeJS.Timeout | null = null
 let inFlight = false
@@ -111,7 +112,7 @@ ipcMain.handle(
   IPC.CONNECT.CREATE,
   async (_, req: ConnectionFormType): Promise<ConnectionCreateResponse> => {
     let isSuccess = false
-    const blocks = organizeCsvInBlocks(csv)
+    blocks = organizeCsvInBlocks(csv)
     try {
       client = new ModbusRTU()
       await client.connectRTUBuffered(req.port, {
@@ -176,6 +177,11 @@ ipcMain.handle(
     return updateStatus
   }
 )
+
+ipcMain.handle(IPC.READING.FETCH, async (): Promise<void> => {
+  const win = BrowserWindow.getAllWindows()[0]
+  startReading(win, blocks)
+})
 
 app.on('before-quit', () => {
   stopReading()

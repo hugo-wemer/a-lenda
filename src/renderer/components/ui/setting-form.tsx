@@ -48,7 +48,10 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
     const updateSetting = await window.App.updateSetting({
       register: { id: setting.id, newValue: data.newValue },
     })
-    console.log(updateSetting)
+    if (updateSetting.isSuccess) {
+      console.log('fetching...')
+      await window.App.readingFetch()
+    }
   }
 
   return (

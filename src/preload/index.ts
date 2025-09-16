@@ -67,6 +67,10 @@ const API = {
   updateSetting(req: UpdateSettingRequest): Promise<UpdateSettingResponse> {
     return ipcRenderer.invoke(IPC.SETTING.UPDATE, req)
   },
+
+  readingFetch(): Promise<void> {
+    return ipcRenderer.invoke(IPC.READING.FETCH)
+  },
 }
 
 contextBridge.exposeInMainWorld('App', API)

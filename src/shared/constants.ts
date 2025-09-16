@@ -28,6 +28,7 @@ export const IPC = {
     DELETE: 'connect: delete',
   },
   READING: {
+    FETCH: 'reading: fetch',
     UPDATE: 'reading: update',
   },
   READING_STATUS: {

@@ -115,7 +115,7 @@ export function ConnectionForm() {
 
   const { mutateAsync: createConnection, isPending: isConnecting } = useMutation({
     mutationFn: async (data: ConnectionFormType) => {
-      const csv = await window.App.fetchCsv({
+      await window.App.fetchCsv({
         equipment: data.equipment,
         firmwareVersion: data.firmwareVersion,
       })
