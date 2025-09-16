@@ -14,6 +14,19 @@ export async function writeModbus({
 
   switch (register['Tipo (Modbus)']) {
     case 'Holding register': {
+      if (register.Tratamento === '32_ABCD') {
+        const unsigned32 = integerValue >>> 0
+        const low = unsigned32 & 0xffff
+        const high = (unsigned32 >>> 16) & 0xffff
+
+        try {
+          await client?.writeRegisters(Number(register['Registrador (Modbus)']), [high, low])
+          return { isSuccess: true }
+        } catch (error) {
+          console.log(error)
+          return { isSuccess: false }
+        }
+      }
       try {
         const response = await client?.writeRegister(
           Number(register['Registrador (Modbus)']),
@@ -24,7 +37,6 @@ export async function writeModbus({
         }
         return { isSuccess: false }
       } catch (error) {
-        console.log(error)
         return { isSuccess: false }
       }
     }

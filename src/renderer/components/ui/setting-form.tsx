@@ -84,7 +84,12 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
           </Select>
         ) : (
           <div className="flex items-center gap-1">
-            <Input className="bg-card" type="number" {...register('newValue')} />
+            <Input
+              className="bg-card"
+              type="number"
+              step={1 / Number(setting.divisor)}
+              {...register('newValue')}
+            />
             {setting.ptUnit && <span className="text-muted-foreground">{setting.ptUnit}</span>}
           </div>
         )}
