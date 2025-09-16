@@ -1,10 +1,6 @@
-import {
-  newSettingSubmitionSchema,
-  type RegisterReadingsResponse,
-  type SettingsFetchResponse,
-} from 'shared/types'
+import { newSettingSubmitionSchema, type RegisterReadingsResponse } from 'shared/types'
 import { Badge } from './badge'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
 import { Input } from './input'
 import { Button } from './button'
@@ -25,7 +21,6 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
     }
     if (setting.divisor) {
       const val = Number(setting.value) / Number(setting.divisor)
-      // ex.: divisor "100" -> 2 casas; ajuste conforme sua regra
       const casas = String(setting.divisor).length - 1
       return val.toFixed(Math.max(casas, 0))
     }
