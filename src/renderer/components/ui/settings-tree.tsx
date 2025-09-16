@@ -119,6 +119,8 @@ function Node({
 }) {
   const [isOpen, setIsOpen] = useState(true)
 
+  console.log(node.register?.ptValue)
+
   return (
     <li className="my-1.5">
       <div className="flex">
@@ -168,7 +170,6 @@ function Node({
           </button>
         )}
       </div>
-
       {isOpen && (
         <ul className="pl-4">
           {node.nodes?.map(node => {

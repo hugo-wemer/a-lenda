@@ -8,7 +8,6 @@ export function interpretConversion(
 ): string {
   if (conversion == null || String(conversion).trim() === '')
     return (Number(value) / Number(divisor)).toString()
-  // return (value.toString())
   const pairs = conversion.split(/\\+/)
 
   const valueStr = String(value).trim()
@@ -33,6 +32,49 @@ export function interpretConversion(
   }
 
   return value.toString()
+}
+
+function interpret32ABCD(value: (number | boolean)[], divisor: string, minimumValue: string) {
+  const high = value[0].toString(2)
+  const low = value[1].toString(2)
+  const intValue = Number.parseInt(high + low, 2)
+  if (Number(minimumValue) < 0) {
+    const unSigned = intValue >>> 0
+    return (
+      (unSigned & 0x80000000 ? unSigned - 0x100000000 : unSigned) / Number(divisor)
+    ).toString()
+  }
+  return (intValue / Number(divisor)).toString()
+}
+
+function interpretValue({
+  minimumValue,
+  conversion,
+  readings,
+  index,
+  divisor,
+  treatment,
+}: {
+  minimumValue: string
+  conversion: string | null
+  readings: (number | boolean)[]
+  index: number
+  divisor: string
+  treatment: string
+}) {
+  if (conversion !== '') {
+    return interpretConversion(Number(readings[index]), conversion, divisor)
+  }
+  if (treatment === '32_ABCD') {
+    return interpret32ABCD(readings, divisor, minimumValue)
+  }
+  if (Number(minimumValue) < 0) {
+    const unSignedInt = Number(readings[index]) & 0xffff
+    return (
+      (unSignedInt & 0x8000 ? unSignedInt - 0x10000 : unSignedInt) / Number(divisor)
+    ).toString()
+  }
+  return (Number(readings[index]) / Number(divisor)).toString()
 }
 
 export function arrangePoints(
@@ -80,8 +122,24 @@ export function arrangePoints(
       ptDescription: register.ptDescription,
       enDescription: register.enDescription,
       value: reading[index].toString(),
-      ptValue: interpretConversion(Number(reading[index]), register.ptConversion, register.divisor), //.replace('.', ','),
-      enValue: interpretConversion(Number(reading[index]), register.enConversion, register.divisor),
+      ptValue: interpretValue({
+        // biome-ignore lint/style/noNonNullAssertion: <explanation>
+        minimumValue: register.lowLimit!,
+        conversion: register.ptConversion,
+        divisor: register.divisor,
+        index,
+        readings: reading,
+        treatment: register.treatment,
+      }), //interpretConversion(Number(reading[index]), register.ptConversion, register.divisor),
+      enValue: interpretValue({
+        // biome-ignore lint/style/noNonNullAssertion: <explanation>
+        minimumValue: register.lowLimit!,
+        conversion: register.enConversion,
+        divisor: register.divisor,
+        index,
+        readings: reading,
+        treatment: register.treatment,
+      }), //interpretConversion(Number(reading[index]), register.enConversion, register.divisor),
       divisor: register.divisor,
       ptConversion: { options: parseConversionString(register.ptConversion || '') },
       enConversion: { options: parseConversionString(register.enConversion || '') },

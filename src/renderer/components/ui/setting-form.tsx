@@ -49,10 +49,11 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
       register: { id: setting.id, newValue: data.newValue },
     })
     if (updateSetting.isSuccess) {
-      console.log('fetching...')
       await window.App.readingFetch()
     }
   }
+
+  console.log(setting.value)
 
   return (
     <div className="flex flex-col items-center justify-center h-full gap-2">
