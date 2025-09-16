@@ -103,30 +103,32 @@ export interface CsvProps {
   CDC: string
 }
 
+export interface RegisterProps {
+  id: string
+  mode: string
+  treatment: string
+  lowLimit: string | null
+  highLimit: string | null
+  defaultValue: string | null
+  divisor: string
+  ptUnit: string | null
+  enUnit: string | null
+  ptConversion: string | null
+  enConversion: string | null
+  ptDescription: string
+  enDescription: string
+  ptGroup: string | null
+  enGroup: string | null
+  ptDisplay: string | null
+  enDisplay: string | null
+}
+
 export interface BlockProps {
   block: {
     initial: number
     quantity: number
   }
-  registers: {
-    id: string
-    mode: string
-    treatment: string
-    lowLimit: string | null
-    highLimit: string | null
-    defaultValue: string | null
-    divisor: string
-    ptUnit: string | null
-    enUnit: string | null
-    ptConversion: string | null
-    enConversion: string | null
-    ptDescription: string
-    enDescription: string
-    ptGroup: string | null
-    enGroup: string | null
-    ptDisplay: string | null
-    enDisplay: string | null
-  }[]
+  registers: RegisterProps[]
   table: string
   type: string
 }
@@ -186,3 +188,13 @@ export const newSettingSubmitionSchema = z.object({
 })
 
 export type newSettingSubmitionType = z.infer<typeof newSettingSubmitionSchema>
+
+export interface UpdateSettingRequest {
+  register: {
+    id: string
+    newValue: string
+  }
+}
+export interface UpdateSettingResponse {
+  isSuccess: boolean
+}

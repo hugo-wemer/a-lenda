@@ -8,10 +8,13 @@ import type {
   ConnectionCloseResponse,
   ConnectionCreateResponse,
   ConnectionFormType,
+  CsvProps,
   FetchConnectionResponse,
   FetchCsvRequest,
   SettingsFetchRequest,
   SettingsFetchResponse,
+  UpdateSettingRequest,
+  UpdateSettingResponse,
 } from 'shared/types'
 import path from 'node:path'
 import { organizeCsvInBlocks, readCsv } from './lib/csv-parsing'
@@ -19,6 +22,7 @@ import ModbusRTU from 'modbus-serial'
 import { readModbus } from './lib/read-modbus'
 import { arrangePoints } from './lib/arrange-points'
 import { parseConversionString } from './lib/parse-conversion-string'
+import { writeModbus } from './lib/write-modbus'
 
 let client: ModbusRTU | null = null
 let csv: any[]
@@ -153,7 +157,7 @@ ipcMain.handle(IPC.CONNECT.FETCH, async (): Promise<FetchConnectionResponse> => 
 })
 
 ipcMain.handle(
-  IPC.SETTINGS.FETCH,
+  IPC.SETTING.FETCH,
   async (_, id: SettingsFetchRequest): Promise<SettingsFetchResponse> => {
     const options = csv.find(register => register.UUID === id.uuid)
     const result = parseConversionString(options['Conversão pt'])
@@ -161,6 +165,15 @@ ipcMain.handle(
     return {
       options: result,
     }
+  }
+)
+
+ipcMain.handle(
+  IPC.SETTING.UPDATE,
+  async (_, { register }: UpdateSettingRequest): Promise<UpdateSettingResponse> => {
+    const reg = csv.find(reg => reg.UUID === register.id) as CsvProps
+    const updateStatus = writeModbus({ register: reg, client, value: register.newValue })
+    return updateStatus
   }
 )
 

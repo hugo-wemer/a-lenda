@@ -9,6 +9,8 @@ import type {
   SettingsFetchRequest,
   SettingsFetchResponse,
   StoreType,
+  UpdateSettingRequest,
+  UpdateSettingResponse,
 } from 'shared/types'
 
 type Unsubscribe = () => void
@@ -59,7 +61,11 @@ const API = {
   },
 
   fetchSettingOptions(req: SettingsFetchRequest): Promise<SettingsFetchResponse> {
-    return ipcRenderer.invoke(IPC.SETTINGS.FETCH, req)
+    return ipcRenderer.invoke(IPC.SETTING.FETCH, req)
+  },
+
+  updateSetting(req: UpdateSettingRequest): Promise<UpdateSettingResponse> {
+    return ipcRenderer.invoke(IPC.SETTING.UPDATE, req)
   },
 }
 

@@ -39,7 +39,6 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
   useEffect(() => {
     if (setting.ptConversion?.options.length && setting.ptConversion?.options.length > 0) {
       setValue('newValue', setting.value.toString())
-      console.log(`PRE SELECIONADO opc: ${setting.value.toString()}`)
     } else if (setting.divisor) {
       setValue(
         'newValue',
@@ -50,8 +49,11 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
     }
   }, [setting])
 
-  function handleUpdateSetting(data: any) {
-    console.log(data)
+  async function handleUpdateSetting(data: { newValue: string }) {
+    const updateSetting = await window.App.updateSetting({
+      register: { id: setting.id, newValue: data.newValue },
+    })
+    console.log(updateSetting)
   }
 
   return (
