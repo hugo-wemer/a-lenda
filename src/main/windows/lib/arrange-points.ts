@@ -35,7 +35,6 @@ export function interpretConversion(
 }
 
 function interpret32ABCD(value: (number | boolean)[], divisor: string, minimumValue: string) {
-  console.log(value)
   const high = value[0].toString(2)
   const low = value[1].toString(2)
   const intValue = Number.parseInt(high + low, 2)
@@ -80,6 +79,25 @@ function interpretValue({
   return (Number(readings[index]) / Number(divisor)).toString()
 }
 
+function isOutOfLimit(register, idx, index, reading) {
+  if (!register.ptConversion) {
+    const valueAsString = interpretValue({
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      minimumValue: register.lowLimit!,
+      conversion: register.ptConversion,
+      divisor: register.divisor,
+      index: idx,
+      readings: reading,
+      treatment: register.treatment,
+    })
+    const max = Number(register.highLimit) / Number(register.divisor)
+    const min = Number(register.lowLimit) / Number(register.divisor)
+    const value = Number(valueAsString)
+    return value < min || value > max
+  }
+  return reading[index] < Number(register.lowLimit) || reading[index] > Number(register.highLimit)
+}
+
 export function arrangePoints(
   block: BlockProps,
   reading: Array<boolean | number> | undefined
@@ -113,14 +131,30 @@ export function arrangePoints(
   }
   let idx = 0
   block.registers.map((register, index) => {
+    // register.id === 'a82d2ebc7af14e359097c1b015cf6db4' &&
+    //   console.log(
+    //     Number(register.lowLimit),
+    //     Number(
+    //       register.treatment === '32_ABCD'
+    //         ? Number(
+    //             interpretValue({
+    //               // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    //               minimumValue: register.lowLimit!,
+    //               conversion: register.ptConversion,
+    //               divisor: register.divisor,
+    //               index: idx,
+    //               readings: reading,
+    //               treatment: register.treatment,
+    //             })
+    //           )
+    //         : reading[index]
+    //     )
+    //   )
     response.push({
       id: register.id,
       readSuccess: true,
       mode: register.mode,
-      outOfLimit: !!(
-        Number(register.lowLimit) > Number(reading[index]) ||
-        Number(register.highLimit) < Number(reading[index])
-      ),
+      outOfLimit: isOutOfLimit(register, idx, index, reading),
       ptUnit: register.ptUnit,
       enUnit: register.enUnit,
       ptDescription: register.ptDescription,
