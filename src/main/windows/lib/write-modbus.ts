@@ -10,7 +10,6 @@ export async function writeModbus({
   const allowNegativeValues = Number(register['Limite inferior']) < 0
   if (allowNegativeValues) {
     integerValue = integerValue & 0xffff
-    console.log(integerValue)
   }
 
   switch (register['Tipo (Modbus)']) {

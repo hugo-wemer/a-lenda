@@ -62,7 +62,7 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
         {setting.ptConversion?.options.length !== 0 ? (
           <Select
             key={setting.id}
-            defaultValue={setting.value.toString()}
+            defaultValue={(Number(setting.value) || Number(setting.value === 'true')).toString()}
             onValueChange={newValue => {
               setValue('newValue', newValue)
             }}
