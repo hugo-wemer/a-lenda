@@ -4,8 +4,8 @@ import { Download, Loader2, RefreshCcw } from 'lucide-react'
 import { useReadings } from 'renderer/store/readings'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 import { Input } from './ui/input'
-import { Separator } from './ui/separator'
 import { Button } from './ui/button'
+import { createCsv } from 'renderer/lib/create-csv'
 
 export const normalize = (s: string) =>
   s
@@ -40,6 +40,8 @@ export function ReadingsTable({
     })
   }, [registers, deferredQuery])
 
+  const url = createCsv(registers)
+
   return (
     <div className="flex h-full min-h-0 flex-col p-2 gap-2">
       <div>
@@ -61,11 +63,15 @@ export function ReadingsTable({
             <RefreshCcw />
           </Button>
           <Button
+            asChild
             size="icon"
             variant={'secondary'}
             className="cursor-pointer hover:bg-muted-foreground/50"
+            // onClick={() => createCsv(registers)}
           >
-            <Download />
+            <a href={url} download>
+              <Download />
+            </a>
           </Button>
         </div>
       </div>
