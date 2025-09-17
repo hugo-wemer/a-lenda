@@ -1,4 +1,9 @@
-import type { BlockProps, BlockReadingResponse, RegisterReadingsResponse } from 'shared/types'
+import type {
+  BlockProps,
+  BlockReadingResponse,
+  RegisterProps,
+  RegisterReadingsResponse,
+} from 'shared/types'
 import { parseConversionString } from './parse-conversion-string'
 
 export function interpretConversion(
@@ -79,7 +84,12 @@ function interpretValue({
   return (Number(readings[index]) / Number(divisor)).toString()
 }
 
-function isOutOfLimit(register, idx, index, reading) {
+function isOutOfLimit(
+  register: RegisterProps,
+  idx: number,
+  index: number,
+  reading: (number | boolean)[]
+) {
   if (!register.ptConversion) {
     const valueAsString = interpretValue({
       // biome-ignore lint/style/noNonNullAssertion: <explanation>
@@ -95,7 +105,10 @@ function isOutOfLimit(register, idx, index, reading) {
     const value = Number(valueAsString)
     return value < min || value > max
   }
-  return reading[index] < Number(register.lowLimit) || reading[index] > Number(register.highLimit)
+  return (
+    Number(reading[index]) < Number(register.lowLimit) ||
+    Number(reading[index]) > Number(register.highLimit)
+  )
 }
 
 export function arrangePoints(
