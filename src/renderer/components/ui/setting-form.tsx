@@ -91,7 +91,7 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
             {setting.ptUnit && <span className="text-muted-foreground">{setting.ptUnit}</span>}
           </div>
         )}
-        <Button className="w-full">Alterar parâmetro</Button>
+        <Button className="w-full cursor-pointer">Alterar parâmetro</Button>
       </form>
     </div>
   )

@@ -35,6 +35,7 @@ export function interpretConversion(
 }
 
 function interpret32ABCD(value: (number | boolean)[], divisor: string, minimumValue: string) {
+  console.log(value)
   const high = value[0].toString(2)
   const low = value[1].toString(2)
   const intValue = Number.parseInt(high + low, 2)
@@ -44,6 +45,8 @@ function interpret32ABCD(value: (number | boolean)[], divisor: string, minimumVa
       (unSigned & 0x80000000 ? unSigned - 0x100000000 : unSigned) / Number(divisor)
     ).toString()
   }
+
+  // console.log((intValue / Number(divisor)).toString())
   return (intValue / Number(divisor)).toString()
 }
 
@@ -66,7 +69,7 @@ function interpretValue({
     return interpretConversion(Number(readings[index]), conversion, divisor)
   }
   if (treatment === '32_ABCD') {
-    return interpret32ABCD(readings, divisor, minimumValue)
+    return interpret32ABCD([readings[index], readings[index + 1]], divisor, minimumValue)
   }
   if (Number(minimumValue) < 0) {
     const unSignedInt = Number(readings[index]) & 0xffff
@@ -108,6 +111,7 @@ export function arrangePoints(
       registers: response,
     }
   }
+  let idx = 0
   block.registers.map((register, index) => {
     response.push({
       id: register.id,
@@ -127,7 +131,7 @@ export function arrangePoints(
         minimumValue: register.lowLimit!,
         conversion: register.ptConversion,
         divisor: register.divisor,
-        index,
+        index: idx,
         readings: reading,
         treatment: register.treatment,
       }), //interpretConversion(Number(reading[index]), register.ptConversion, register.divisor),
@@ -136,7 +140,7 @@ export function arrangePoints(
         minimumValue: register.lowLimit!,
         conversion: register.enConversion,
         divisor: register.divisor,
-        index,
+        index: idx,
         readings: reading,
         treatment: register.treatment,
       }), //interpretConversion(Number(reading[index]), register.enConversion, register.divisor),
@@ -148,6 +152,11 @@ export function arrangePoints(
       ptDisplay: register.ptDisplay,
       enDisplay: register.enDisplay,
     })
+    if (register.treatment === '32_ABCD') {
+      idx = idx + 2
+    } else {
+      idx = idx + 1
+    }
   })
 
   return {

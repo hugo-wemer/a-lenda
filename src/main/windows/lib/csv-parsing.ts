@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import { parse } from 'csv-parse'
 import type { BlockProps, CsvProps } from 'shared/types'
+import { X } from 'lucide-react'
 
 export async function readCsv(path: string) {
   const records = []
@@ -57,10 +58,21 @@ export function organizeCsvInBlocks(csv: CsvProps[]) {
 
   for (const key in tables) {
     const initial = tables[key].block.initial
-    const maxReg = Math.max(
-      ...tables[key].registers.map((_r: any, i: any) => initial + i)
-    )
-    tables[key].block.quantity = maxReg - initial + 1
+    // const maxReg = Math.max(
+    //   ...tables[key].registers.map(
+    //     (_r: any, i: any) => initial + (_r.treatment === '32_ABCD' ? i * 2 : i)
+    //   )
+    // )
+    let quantity = 0
+    tables[key].registers.map((_r: any, i: any) => {
+      if (_r.treatment === '32_ABCD') {
+        quantity = quantity + 2
+      } else {
+        quantity++
+      }
+    })
+    // const maxReg = Math.max(...tables[key].registers.map((_r: any, i: any) => initial + i))
+    tables[key].block.quantity = quantity //maxReg - initial + 1
   }
 
   return Object.values(tables) as BlockProps[]

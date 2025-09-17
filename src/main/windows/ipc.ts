@@ -48,6 +48,7 @@ function startReading(win: Electron.BrowserWindow, blocks: BlockProps[]) {
     try {
       const payload = await readModbus(blocks[i], client)
       win.webContents.send(IPC.READING.UPDATE, arrangePoints(blocks[i], payload))
+      // console.log(blocks[i])
     } catch (err) {
     } finally {
       i = i + 1
