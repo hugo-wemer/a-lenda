@@ -28,7 +28,7 @@ export function groupRegistersByPtDisplay(
   for (const r of registers) {
     if (!r.ptDisplay) continue // ignora sem caminho
     const parts = r.ptDisplay
-      .split('/')
+      .split('\\')
       .map(s => s.trim())
       .filter(Boolean)
     if (!parts.length) continue

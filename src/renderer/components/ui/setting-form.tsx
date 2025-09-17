@@ -37,9 +37,10 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
     } else if (setting.divisor) {
       setValue(
         'newValue',
-        (Number(setting.value) / Number(setting.divisor))
-          .toFixed(setting.divisor.length - 1)
-          .toString()
+        setting.ptValue
+        // (Number(setting.value) / Number(setting.divisor))
+        //   .toFixed(setting.divisor.length - 1)
+        //   .toString()
       )
     }
   }, [setting])
@@ -52,8 +53,6 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
       await window.App.readingFetch()
     }
   }
-
-  console.log(setting.value)
 
   return (
     <div className="flex flex-col items-center justify-center h-full gap-2">
