@@ -6,6 +6,7 @@ import { Input } from './input'
 import { Button } from './button'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { FolderInput } from 'lucide-react'
 
 export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) {
   const { register, handleSubmit, setValue, reset } = useForm({
