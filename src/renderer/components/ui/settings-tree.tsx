@@ -1,10 +1,11 @@
-import { ChevronRightIcon, Cog, FolderCog } from 'lucide-react'
-import { groupRegistersByPtDisplay, type MenuNode } from 'renderer/lib/group-registers-by-ptDisplay'
+import { ChevronRightIcon, Cog, FolderCog, RefreshCcw } from 'lucide-react'
+import type { MenuNode } from 'renderer/lib/group-registers-by-ptDisplay'
 import type { RegisterReadingsResponse } from 'shared/types'
 import { Badge } from './badge'
 import { useDeferredValue, useMemo, useState } from 'react'
 import { Input } from './input'
 import { ScrollArea } from './scroll-area'
+import { Button } from './button'
 
 const normalize = (s: string) =>
   s
@@ -63,15 +64,15 @@ function filterTree(
 }
 
 export function SettinsTree({
-  registers,
   setSelectedSetting,
+  baseTree,
 }: {
-  registers: RegisterReadingsResponse[]
   setSelectedSetting: React.Dispatch<React.SetStateAction<RegisterReadingsResponse | undefined>>
+  baseTree: MenuNode[]
 }) {
   const [query, setQuery] = useState('')
   const deferredQuery = useDeferredValue(query)
-  const baseTree = useMemo(() => groupRegistersByPtDisplay(registers), [registers])
+
   const { pruned } = useMemo(
     () => filterTree(baseTree as UINode[], deferredQuery),
     [baseTree, deferredQuery]
@@ -79,14 +80,22 @@ export function SettinsTree({
 
   return (
     <div className="space-y-2">
-      <div className="">
+      <div className="flex gap-1">
         <Input
-          placeholder="Busque por menu, caminho ou descrição"
+          placeholder="Busque por menu ou descrição"
           value={query}
           onChange={e => setQuery(e.target.value)}
           onKeyDown={e => e.key === 'Escape' && setQuery('')}
           className=""
         />
+        <Button
+          onClick={async () => await window.App.readingFetch()}
+          size={'icon'}
+          variant={'secondary'}
+          className="cursor-pointer hover:bg-muted-foreground/50"
+        >
+          <RefreshCcw />
+        </Button>
       </div>
       <ScrollArea className="h-[calc(100vh-130px)] bg-card overflow-hidden rounded-md border border-muted-foreground">
         <ul className="bg-card border-muted">

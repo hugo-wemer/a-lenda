@@ -67,7 +67,7 @@ export function ReadingsTable({
             size="icon"
             variant={'secondary'}
             className="cursor-pointer hover:bg-muted-foreground/50"
-            // onClick={() => createCsv(registers)}
+            // onClick={() => URL.revokeObjectURL(url)}
           >
             <a href={url} download>
               <Download />

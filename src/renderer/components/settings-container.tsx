@@ -1,10 +1,13 @@
 import { useReadings } from 'renderer/store/readings'
 import { useMemo, useState } from 'react'
-import { Loader2, Cog } from 'lucide-react'
+import { Loader2, Cog, FileOutput, FileUp } from 'lucide-react'
 import type { RegisterReadingsResponse } from 'shared/types'
 import { SettinsTree } from './ui/settings-tree'
 import { SettingForm } from './ui/setting-form'
 import { motion } from 'motion/react'
+import { Button } from './ui/button'
+import { groupRegistersByPtDisplay } from 'renderer/lib/group-registers-by-ptDisplay'
+import { createSettingsFile } from 'renderer/lib/create-settings-file'
 
 export function SettingsContainer({
   isFetchingBlocks,
@@ -17,10 +20,27 @@ export function SettingsContainer({
     () => Array.from(blocks.values()).flatMap(({ registers }) => registers),
     [blocks]
   )
+  const baseTree = useMemo(() => groupRegistersByPtDisplay(registers), [registers])
+  const url = createSettingsFile({
+    id: crypto.randomUUID(),
+    registers: registers
+      .filter(register => register.ptDisplay !== '')
+      .map(({ id, ptDisplay, value }) => ({ id, ptDisplay, value })),
+  })
+
+  async function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const text = (await file.text()).replace(/^\uFEFF/, '')
+    const data = JSON.parse(text)
+    console.log(data)
+    // await window.App.importSettings(data)
+    e.target.value = ''
+  }
 
   return (
     <div className="relative flex-1 min-h-0 flex mx-2">
-      <div className="flex flex-1  gap-8">
+      <div className="flex flex-1 gap-8">
         <div className="w-1/2">
           {isFetchingBlocks ? (
             <div className="h-[calc(100vh-85px)]">
@@ -32,7 +52,7 @@ export function SettingsContainer({
               </motion.div>
             </div>
           ) : (
-            <SettinsTree registers={registers} setSelectedSetting={setSelectedSetting} />
+            <SettinsTree baseTree={baseTree} setSelectedSetting={setSelectedSetting} />
           )}
         </div>
         <div className="w-full">
@@ -47,6 +67,48 @@ export function SettingsContainer({
             </div>
           )}
         </div>
+      </div>
+      <div className="absolute right-0 flex justify-end">
+        <Button
+          asChild
+          size={'sm'}
+          variant={'link'}
+          className="cursor-pointer"
+          // onClick={() => URL.revokeObjectURL(url)}
+          aria-disabled={isFetchingBlocks}
+        >
+          <a
+            href={url}
+            download={`${new Date(Date.now()).toLocaleString('pt-BR')}.settings`}
+            className="aria-disabled:pointer-events-none aria-disabled:opacity-10"
+          >
+            <FileOutput />
+            <span>Exportar</span>
+          </a>
+        </Button>
+        {/* <Input type="file" className="text-primary underline-offset-4 hover:underline" /> */}
+        <input
+          id={'export'}
+          type="file"
+          accept=".settings,application/json"
+          className="hidden"
+          onChange={event => handleImport(event)}
+        />
+        <Button
+          size={'sm'}
+          variant={'link'}
+          className="cursor-pointer"
+          asChild
+          aria-disabled={isFetchingBlocks}
+        >
+          <label
+            htmlFor="export"
+            className="aria-disabled:pointer-events-none aria-disabled:opacity-10"
+          >
+            <FileUp />
+            <span>Importar</span>
+          </label>
+        </Button>
       </div>
     </div>
   )
