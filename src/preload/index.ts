@@ -8,6 +8,7 @@ import type {
   PortsType,
   SettingsFetchRequest,
   SettingsFetchResponse,
+  SettingsProps,
   StoreType,
   UpdateSettingRequest,
   UpdateSettingResponse,
@@ -70,6 +71,10 @@ const API = {
 
   readingFetch(): Promise<void> {
     return ipcRenderer.invoke(IPC.READING.FETCH)
+  },
+
+  updateSettings(req: SettingsProps): Promise<any> {
+    return ipcRenderer.invoke(IPC.SETTINGS.UPDATE, req)
   },
 }
 

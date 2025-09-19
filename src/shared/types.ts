@@ -198,3 +198,16 @@ export interface UpdateSettingRequest {
 export interface UpdateSettingResponse {
   isSuccess: boolean
 }
+
+export const SettingsSchema = z.object({
+  id: z.uuid(),
+  registers: z.array(
+    z.object({
+      id: z.string(),
+      ptDisplay: z.string(),
+      value: z.string(),
+    })
+  ),
+})
+
+export type SettingsProps = z.infer<typeof SettingsSchema>

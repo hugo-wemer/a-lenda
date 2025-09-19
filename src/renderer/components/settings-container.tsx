@@ -1,7 +1,7 @@
 import { useReadings } from 'renderer/store/readings'
 import { useMemo, useState } from 'react'
 import { Loader2, Cog, FileOutput, FileUp } from 'lucide-react'
-import type { RegisterReadingsResponse } from 'shared/types'
+import { SettingsSchema, type RegisterReadingsResponse } from 'shared/types'
 import { SettinsTree } from './ui/settings-tree'
 import { SettingForm } from './ui/setting-form'
 import { motion } from 'motion/react'
@@ -25,7 +25,11 @@ export function SettingsContainer({
     id: crypto.randomUUID(),
     registers: registers
       .filter(register => register.ptDisplay !== '')
-      .map(({ id, ptDisplay, value }) => ({ id, ptDisplay, value })),
+      .map(({ id, ptDisplay, value }) => ({
+        id,
+        ptDisplay,
+        value,
+      })),
   })
 
   async function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
@@ -33,7 +37,14 @@ export function SettingsContainer({
     if (!file) return
     const text = (await file.text()).replace(/^\uFEFF/, '')
     const data = JSON.parse(text)
-    console.log(data)
+
+    try {
+      const parsedData = SettingsSchema.parse(data)
+      window.App.updateSettings(parsedData)
+    } catch (error) {
+      console.log('parse error')
+    }
+
     // await window.App.importSettings(data)
     e.target.value = ''
   }
@@ -75,7 +86,7 @@ export function SettingsContainer({
           variant={'link'}
           className="cursor-pointer"
           // onClick={() => URL.revokeObjectURL(url)}
-          aria-disabled={isFetchingBlocks}
+          aria-disabled={isFetchingBlocks || baseTree.length < 1}
         >
           <a
             href={url}
@@ -99,7 +110,7 @@ export function SettingsContainer({
           variant={'link'}
           className="cursor-pointer"
           asChild
-          aria-disabled={isFetchingBlocks}
+          aria-disabled={isFetchingBlocks || baseTree.length < 1}
         >
           <label
             htmlFor="export"

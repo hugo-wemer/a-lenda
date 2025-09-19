@@ -5,8 +5,9 @@ export async function writeModbus({
   register,
   client,
   value,
-}: { register: CsvProps; client: ModbusRTU | null; value: string }) {
-  let integerValue = Number(value) * Number(register.Divisor)
+  bypassMultiplyer = false,
+}: { register: CsvProps; client: ModbusRTU | null; value: string; bypassMultiplyer?: boolean }) {
+  let integerValue = bypassMultiplyer ? Number(value) : Number(value) * Number(register.Divisor)
   const allowNegativeValues = Number(register['Limite inferior']) < 0
   if (allowNegativeValues) {
     integerValue = integerValue & 0xffff

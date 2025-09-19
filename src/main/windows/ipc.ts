@@ -13,6 +13,7 @@ import type {
   FetchCsvRequest,
   SettingsFetchRequest,
   SettingsFetchResponse,
+  SettingsProps,
   UpdateSettingRequest,
   UpdateSettingResponse,
 } from 'shared/types'
@@ -23,6 +24,7 @@ import { readModbus } from './lib/read-modbus'
 import { arrangePoints } from './lib/arrange-points'
 import { parseConversionString } from './lib/parse-conversion-string'
 import { writeModbus } from './lib/write-modbus'
+import { fromModbusCode } from './lib/from-modbus-code'
 
 let client: ModbusRTU | null = null
 let csv: any[]
@@ -183,6 +185,69 @@ ipcMain.handle(
 ipcMain.handle(IPC.READING.FETCH, async (): Promise<void> => {
   const win = BrowserWindow.getAllWindows()[0]
   startReading(win, blocks)
+})
+
+ipcMain.handle(IPC.SETTINGS.UPDATE, async (_, { registers }: SettingsProps): Promise<any> => {
+  const responses = []
+  for (const value of registers) {
+    const register = (csv.find(register => register.UUID === value.id) as CsvProps) || undefined
+    const response = await writeModbus({
+      client,
+      register,
+      value: value.value,
+      bypassMultiplyer: true,
+    })
+    !response.isSuccess && responses.push({ response, value })
+    // if (register['Tipo (Modbus)'] === 'Coil') {
+    //   try {
+    //     const response = await client?.writeCoil(
+    //       Number(register['Registrador (Modbus)']),
+    //       value.value === 'true'
+    //     )
+    //     responses.push({ setting: value.ptDisplay, value: response?.state })
+    //   } catch (error) {
+    //     responses.push({
+    //       setting: value.ptDisplay,
+    //       value: value.value,
+    //       error: fromModbusCode(error),
+    //     })
+    //   }
+    // } else {
+    //   try {
+    //     if (register.Tratamento === '32_ABCD') {
+    //       console.log([
+    //         Number.parseInt(Number(register['Registrador (Modbus)']).toString(2).slice(0, 8)),
+    //         Number.parseInt(Number(register['Registrador (Modbus)']).toString(2).slice(8)),
+    //       ])
+    //       const response1 = await client?.writeRegister(
+    //         Number(register['Registrador (Modbus)']),
+    //         Number.parseInt(Number(register['Registrador (Modbus)']).toString(2).slice(0, 7))
+    //       )
+    //       const response2 = await client?.writeRegister(
+    //         Number(register['Registrador (Modbus)']) + 1,
+    //         Number.parseInt(Number(register['Registrador (Modbus)']).toString(2).slice(8))
+    //       )
+    //       responses.push({
+    //         setting: value.ptDisplay,
+    //         value: { p1: response1?.value, p2: response2?.value },
+    //       })
+    //     } else {
+    //       const response = await client?.writeRegister(
+    //         Number(register['Registrador (Modbus)']),
+    //         Number(value.value)
+    //       )
+    //       responses.push({ setting: value.ptDisplay, value: response?.value })
+    //     }
+    //   } catch (error) {
+    //     responses.push({
+    //       setting: value.ptDisplay,
+    //       value: value.value,
+    //       error: fromModbusCode(error),
+    //     })
+    //   }
+    // }
+  }
+  console.log(responses)
 })
 
 app.on('before-quit', () => {
