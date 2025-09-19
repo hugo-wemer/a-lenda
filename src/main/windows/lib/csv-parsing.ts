@@ -1,7 +1,6 @@
 import fs from 'node:fs'
 import { parse } from 'csv-parse'
 import type { BlockProps, CsvProps } from 'shared/types'
-import { X } from 'lucide-react'
 
 export async function readCsv(path: string) {
   const records = []

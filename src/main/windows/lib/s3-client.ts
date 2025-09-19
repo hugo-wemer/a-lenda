@@ -22,19 +22,13 @@ export async function getConfigFile(): Promise<StoreType> {
   const result = await fetch(`${env.CLAUDFLARE_PUBLIC_URL}/config.json`)
   return result.json()
 }
-export async function updateCsvFile(
-  equipment: string,
-  branch: string
-): Promise<any> {
+export async function updateCsvFile(equipment: string, branch: string): Promise<any> {
   const destDir = path.join(getUserDataDir(), equipment)
   const finalPath = path.join(destDir, `mapa_${branch}.csv`)
   const tmpPath = `${finalPath}.tmp`
 
   await mkdir(destDir, { recursive: true })
-
-  const result = await fetch(
-    `${env.CLAUDFLARE_PUBLIC_URL}/${equipment}/mapa_v${branch}.csv`
-  )
+  const result = await fetch(`${env.CLAUDFLARE_PUBLIC_URL}/${equipment}/mapa_v${branch}.csv`)
 
   const body = result.body
 
@@ -43,9 +37,7 @@ export async function updateCsvFile(
   }
 
   const nodeFile = createWriteStream(tmpPath)
-  await result.body.pipeTo(
-    Writable.toWeb(nodeFile) as WritableStream<Uint8Array>
-  )
+  await result.body.pipeTo(Writable.toWeb(nodeFile) as WritableStream<Uint8Array>)
 
   await rename(tmpPath, finalPath)
   return { path: finalPath }
