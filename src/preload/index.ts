@@ -9,6 +9,7 @@ import type {
   SettingsFetchRequest,
   SettingsFetchResponse,
   SettingsProps,
+  SettingsUpdateResponse,
   StoreType,
   UpdateSettingRequest,
   UpdateSettingResponse,
@@ -73,7 +74,7 @@ const API = {
     return ipcRenderer.invoke(IPC.READING.FETCH)
   },
 
-  updateSettings(req: SettingsProps): Promise<any> {
+  updateSettings(req: SettingsProps): Promise<SettingsUpdateResponse[]> {
     return ipcRenderer.invoke(IPC.SETTINGS.UPDATE, req)
   },
 }

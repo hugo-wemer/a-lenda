@@ -1,13 +1,19 @@
 import { useReadings } from 'renderer/store/readings'
 import { useMemo, useState } from 'react'
 import { Loader2, Cog, FileOutput, FileUp } from 'lucide-react'
-import { SettingsSchema, type RegisterReadingsResponse } from 'shared/types'
+import { SettingsProps, SettingsSchema, type RegisterReadingsResponse } from 'shared/types'
 import { SettinsTree } from './ui/settings-tree'
 import { SettingForm } from './ui/setting-form'
 import { motion } from 'motion/react'
 import { Button } from './ui/button'
 import { groupRegistersByPtDisplay } from 'renderer/lib/group-registers-by-ptDisplay'
 import { createSettingsFile } from 'renderer/lib/create-settings-file'
+import { useMutation } from '@tanstack/react-query'
+import { Dialog, DialogContent, DialogHeader } from './ui/dialog'
+import { ScrollArea } from './ui/scroll-area'
+import { Badge } from './ui/badge'
+import { Separator } from './ui/separator'
+
 
 export function SettingsContainer({
   isFetchingBlocks,
@@ -15,12 +21,26 @@ export function SettingsContainer({
   isFetchingBlocks: boolean
 }) {
   const [selectedSetting, setSelectedSetting] = useState<RegisterReadingsResponse>()
+  const [dialogOpen, setDialogOpen] = useState(false)
+
   const blocks = useReadings(store => store.blocks)
   const registers = useMemo(
     () => Array.from(blocks.values()).flatMap(({ registers }) => registers),
     [blocks]
   )
   const baseTree = useMemo(() => groupRegistersByPtDisplay(registers), [registers])
+
+  function updateSettings(data: SettingsProps){
+    const response = window.App.updateSettings(data)
+    return response
+  }
+
+  const { mutateAsync: updateParams, isPending, data: updateResult } = useMutation({
+    mutationFn: updateSettings,
+    onMutate: () => { setDialogOpen(true) },
+    onSuccess: () => window.App.readingFetch()
+  })
+
   const url = createSettingsFile({
     id: crypto.randomUUID(),
     registers: registers
@@ -40,12 +60,10 @@ export function SettingsContainer({
 
     try {
       const parsedData = SettingsSchema.parse(data)
-      window.App.updateSettings(parsedData)
+      updateParams(parsedData)
     } catch (error) {
       console.log('parse error')
     }
-
-    // await window.App.importSettings(data)
     e.target.value = ''
   }
 
@@ -84,7 +102,7 @@ export function SettingsContainer({
           asChild
           size={'sm'}
           variant={'link'}
-          className="cursor-pointer"
+          className="cursor-pointer text-foreground"
           // onClick={() => URL.revokeObjectURL(url)}
           aria-disabled={isFetchingBlocks || baseTree.length < 1}
         >
@@ -97,7 +115,6 @@ export function SettingsContainer({
             <span>Exportar</span>
           </a>
         </Button>
-        {/* <Input type="file" className="text-primary underline-offset-4 hover:underline" /> */}
         <input
           id={'export'}
           type="file"
@@ -108,7 +125,7 @@ export function SettingsContainer({
         <Button
           size={'sm'}
           variant={'link'}
-          className="cursor-pointer"
+          className="cursor-pointer text-foreground"
           asChild
           aria-disabled={isFetchingBlocks || baseTree.length < 1}
         >
@@ -120,6 +137,27 @@ export function SettingsContainer({
             <span>Importar</span>
           </label>
         </Button>
+        <Dialog open={dialogOpen} onOpenChange={(o) => !isPending && setDialogOpen(o)}>
+          <DialogContent className='border border-transparent shadow-shape h-fit bg-card'>
+            <DialogHeader className='font-semibold'>Logs</DialogHeader>
+            <Separator className='bg-muted-foreground'/>
+            <ScrollArea className='h-[calc(100vh-150px)]'>
+              <div className='flex flex-col gap-1'>
+                {updateResult?.map(reg => 
+                  <div className='flex justify-between mx-4 text-xs'>
+                    <span className='text-muted-foreground'>{reg.value.ptDisplay}</span>
+                    <div className='space-x-2'>
+                      <span>{reg.value.value}</span>
+                      {reg.isSuccess ? <Badge>Sucesso</Badge> : <Badge variant={'destructive'}>Falha</Badge>}
+                    </div>
+                  </div>
+                  // <p>{reg.value.value} - {reg.isSuccess ? 'ok' : 'falha'}</p>
+                )}
+
+              </div>
+            </ScrollArea>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   )

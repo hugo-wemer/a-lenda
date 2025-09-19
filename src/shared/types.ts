@@ -211,3 +211,12 @@ export const SettingsSchema = z.object({
 })
 
 export type SettingsProps = z.infer<typeof SettingsSchema>
+
+export interface SettingsUpdateResponse {
+  isSuccess: boolean,
+  value: {
+    id: string,
+    ptDisplay: string
+    value: string
+  }
+}
