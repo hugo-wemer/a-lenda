@@ -1,7 +1,7 @@
 import { useReadings } from 'renderer/store/readings'
 import { useMemo, useState } from 'react'
-import { Loader2, Cog, FileOutput, FileUp } from 'lucide-react'
-import { SettingsProps, SettingsSchema, type RegisterReadingsResponse } from 'shared/types'
+import { Loader2, Cog, FileOutput, FileUp, Loader } from 'lucide-react'
+import { type SettingsProps, SettingsSchema, type RegisterReadingsResponse } from 'shared/types'
 import { SettinsTree } from './ui/settings-tree'
 import { SettingForm } from './ui/setting-form'
 import { motion } from 'motion/react'
@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader } from './ui/dialog'
 import { ScrollArea } from './ui/scroll-area'
 import { Badge } from './ui/badge'
 import { Separator } from './ui/separator'
-
+import { Skeleton } from './ui/skeleton'
 
 export function SettingsContainer({
   isFetchingBlocks,
@@ -24,23 +24,30 @@ export function SettingsContainer({
   const [dialogOpen, setDialogOpen] = useState(false)
 
   const blocks = useReadings(store => store.blocks)
+
   const registers = useMemo(
     () => Array.from(blocks.values()).flatMap(({ registers }) => registers),
     [blocks]
   )
   const baseTree = useMemo(() => groupRegistersByPtDisplay(registers), [registers])
 
-  function updateSettings(data: SettingsProps){
+  function updateSettings(data: SettingsProps) {
     const response = window.App.updateSettings(data)
     return response
   }
 
-  const { mutateAsync: updateParams, isPending, data: updateResult } = useMutation({
+  const {
+    mutateAsync: updateParams,
+    isPending,
+    data: updateResult,
+  } = useMutation({
     mutationFn: updateSettings,
-    onMutate: () => { setDialogOpen(true) },
-    onSuccess: () => window.App.readingFetch()
+    onMutate: () => {
+      setDialogOpen(true)
+    },
+    onSuccess: () => window.App.readingFetch(),
   })
-
+  console.log(registers.filter(register => register.ptDisplay !== ''))
   const url = createSettingsFile({
     id: crypto.randomUUID(),
     registers: registers
@@ -137,23 +144,43 @@ export function SettingsContainer({
             <span>Importar</span>
           </label>
         </Button>
-        <Dialog open={dialogOpen} onOpenChange={(o) => !isPending && setDialogOpen(o)}>
-          <DialogContent className='border border-transparent shadow-shape h-fit bg-card'>
-            <DialogHeader className='font-semibold'>Logs</DialogHeader>
-            <Separator className='bg-muted-foreground'/>
-            <ScrollArea className='h-[calc(100vh-150px)]'>
-              <div className='flex flex-col gap-1'>
-                {updateResult?.map(reg => 
-                  <div className='flex justify-between mx-4 text-xs'>
-                    <span className='text-muted-foreground'>{reg.value.ptDisplay}</span>
-                    <div className='space-x-2'>
-                      <span>{reg.value.value}</span>
-                      {reg.isSuccess ? <Badge>Sucesso</Badge> : <Badge variant={'destructive'}>Falha</Badge>}
+        <Dialog open={dialogOpen} onOpenChange={o => !isPending && setDialogOpen(o)}>
+          <DialogContent className="border border-transparent shadow-shape h-fit bg-card">
+            <DialogHeader className="font-semibold">Logs</DialogHeader>
+            <Separator className="bg-muted-foreground" />
+            <ScrollArea className="h-[calc(100vh-150px)]">
+              <div className="flex flex-col gap-1">
+                {isPending && (
+                  // <Loader2 className="animate-spin" />
+                  <div className="flex justify-between mx-4">
+                    <Skeleton className="h-[20px] w-[250px] bg-muted-foreground rounded-sm" />
+                    <div className="flex gap-2">
+                      <Skeleton className="h-[20px] w-[50px] bg-muted-foreground rounded-sm" />
+                      <Skeleton className="h-[20px] w-[60px] bg-muted-foreground rounded-sm" />
                     </div>
                   </div>
+                )}
+                {updateResult?.map(
+                  reg => (
+                    <div
+                      key={reg.value.id}
+                      className="flex justify-between mx-4 text-xs text-muted-foreground font-mono"
+                    >
+                      <span className="">{reg.value.ptDisplay}</span>
+                      <div className="space-x-2">
+                        <span>{reg.value.value}</span>
+                        {reg.isSuccess ? (
+                          <Badge className="opacity-80">Sucesso</Badge>
+                        ) : (
+                          <Badge className="opacity-80" variant={'destructive'}>
+                            Falha
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  )
                   // <p>{reg.value.value} - {reg.isSuccess ? 'ok' : 'falha'}</p>
                 )}
-
               </div>
             </ScrollArea>
           </DialogContent>

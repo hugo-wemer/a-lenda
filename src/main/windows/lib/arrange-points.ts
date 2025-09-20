@@ -172,7 +172,10 @@ export function arrangePoints(
       enUnit: register.enUnit,
       ptDescription: register.ptDescription,
       enDescription: register.enDescription,
-      value: reading[index].toString(),
+      value:
+        register.treatment === '32_ABCD'
+          ? interpret32ABCD(reading, '1', register.lowLimit || '0')
+          : reading[index].toString(),
       ptValue: interpretValue({
         // biome-ignore lint/style/noNonNullAssertion: <explanation>
         minimumValue: register.lowLimit!,

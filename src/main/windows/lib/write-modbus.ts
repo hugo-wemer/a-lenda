@@ -21,6 +21,7 @@ export async function writeModbus({
         const high = (unsigned32 >>> 16) & 0xffff
 
         try {
+          // console.log({ reg: Number(register['Registrador (Modbus)']), vals: [high, low] })
           await client?.writeRegisters(Number(register['Registrador (Modbus)']), [high, low])
           return { isSuccess: true }
         } catch (error) {
