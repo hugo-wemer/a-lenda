@@ -188,20 +188,23 @@ ipcMain.handle(IPC.READING.FETCH, async (): Promise<void> => {
   startReading(win, blocks)
 })
 
-ipcMain.handle(IPC.SETTINGS.UPDATE, async (_, { registers }: SettingsProps): Promise<SettingsUpdateResponse[]> => {
-  const responses = []
-  for (const value of registers) {
-    const register = (csv.find(register => register.UUID === value.id) as CsvProps) || undefined
-    const response = await writeModbus({
-      client,
-      register,
-      value: value.value,
-      bypassMultiplyer: true,
-    })
-    responses.push({ isSuccess: response.isSuccess, value })
+ipcMain.handle(
+  IPC.SETTINGS.UPDATE,
+  async (_, { registers }: SettingsProps): Promise<SettingsUpdateResponse[]> => {
+    const responses = []
+    for (const value of registers) {
+      const register = (csv.find(register => register.UUID === value.id) as CsvProps) || undefined
+      const response = await writeModbus({
+        client,
+        register,
+        value: value.value,
+        bypassMultiplyer: true,
+      })
+      responses.push({ isSuccess: response.isSuccess, error: response.error, value })
+    }
+    return responses
   }
-  return responses
-})
+)
 
 app.on('before-quit', () => {
   stopReading()

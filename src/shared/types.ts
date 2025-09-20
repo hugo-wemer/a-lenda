@@ -197,6 +197,7 @@ export interface UpdateSettingRequest {
 }
 export interface UpdateSettingResponse {
   isSuccess: boolean
+  error?: string
 }
 
 export const SettingsSchema = z.object({
@@ -213,9 +214,10 @@ export const SettingsSchema = z.object({
 export type SettingsProps = z.infer<typeof SettingsSchema>
 
 export interface SettingsUpdateResponse {
-  isSuccess: boolean,
+  isSuccess: boolean
+  error?: string
   value: {
-    id: string,
+    id: string
     ptDisplay: string
     value: string
   }

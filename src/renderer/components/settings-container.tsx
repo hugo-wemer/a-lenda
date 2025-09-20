@@ -14,6 +14,8 @@ import { ScrollArea } from './ui/scroll-area'
 import { Badge } from './ui/badge'
 import { Separator } from './ui/separator'
 import { Skeleton } from './ui/skeleton'
+import { HoverCard, HoverCardTrigger } from './ui/hover-card'
+import { HoverCardContent } from '@radix-ui/react-hover-card'
 
 export function SettingsContainer({
   isFetchingBlocks,
@@ -173,7 +175,7 @@ export function SettingsContainer({
                           <Badge className="opacity-80">Sucesso</Badge>
                         ) : (
                           <Badge className="opacity-80" variant={'destructive'}>
-                            Falha
+                            {reg.error}
                           </Badge>
                         )}
                       </div>

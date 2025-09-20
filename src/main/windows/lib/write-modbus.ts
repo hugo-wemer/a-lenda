@@ -1,5 +1,6 @@
 import type ModbusRTU from 'modbus-serial'
 import type { CsvProps } from 'shared/types'
+import { fromModbusCode } from './from-modbus-code'
 
 export async function writeModbus({
   register,
@@ -22,11 +23,13 @@ export async function writeModbus({
 
         try {
           // console.log({ reg: Number(register['Registrador (Modbus)']), vals: [high, low] })
-          await client?.writeRegisters(Number(register['Registrador (Modbus)']), [high, low])
+          const response = await client?.writeRegisters(Number(register['Registrador (Modbus)']), [
+            high,
+            low,
+          ])
           return { isSuccess: true }
         } catch (error) {
-          console.log(error)
-          return { isSuccess: false }
+          return { isSuccess: false, error: fromModbusCode(error) }
         }
       }
       try {
@@ -39,7 +42,7 @@ export async function writeModbus({
         }
         return { isSuccess: false }
       } catch (error) {
-        return { isSuccess: false }
+        return { isSuccess: false, error: fromModbusCode(error) }
       }
     }
     case 'Coil': {
@@ -53,7 +56,7 @@ export async function writeModbus({
         }
         return { isSuccess: false }
       } catch (error) {
-        return { isSuccess: false }
+        return { isSuccess: false, error: fromModbusCode(error) }
       }
     }
   }
