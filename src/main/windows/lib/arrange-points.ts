@@ -50,7 +50,6 @@ function interpret32ABCD(value: (number | boolean)[], divisor: string, minimumVa
     ).toString()
   }
 
-  // console.log((intValue / Number(divisor)).toString())
   return (intValue / Number(divisor)).toString()
 }
 
@@ -144,25 +143,6 @@ export function arrangePoints(
   }
   let idx = 0
   block.registers.map((register, index) => {
-    // register.id === 'a82d2ebc7af14e359097c1b015cf6db4' &&
-    //   console.log(
-    //     Number(register.lowLimit),
-    //     Number(
-    //       register.treatment === '32_ABCD'
-    //         ? Number(
-    //             interpretValue({
-    //               // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    //               minimumValue: register.lowLimit!,
-    //               conversion: register.ptConversion,
-    //               divisor: register.divisor,
-    //               index: idx,
-    //               readings: reading,
-    //               treatment: register.treatment,
-    //             })
-    //           )
-    //         : reading[index]
-    //     )
-    //   )
     response.push({
       id: register.id,
       readSuccess: true,

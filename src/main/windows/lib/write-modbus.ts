@@ -22,7 +22,6 @@ export async function writeModbus({
         const high = (unsigned32 >>> 16) & 0xffff
 
         try {
-          // console.log({ reg: Number(register['Registrador (Modbus)']), vals: [high, low] })
           const response = await client?.writeRegisters(Number(register['Registrador (Modbus)']), [
             high,
             low,
@@ -47,10 +46,14 @@ export async function writeModbus({
     }
     case 'Coil': {
       try {
+        if (value === 'true' || value === 'false') {
+          integerValue = value === 'true' ? 1 : 0
+        }
         const response = await client?.writeCoil(
           Number(register['Registrador (Modbus)']),
           !!integerValue
         )
+
         if (response?.state === !!integerValue) {
           return { isSuccess: true }
         }

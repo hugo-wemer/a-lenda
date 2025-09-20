@@ -49,7 +49,6 @@ export function SettingsContainer({
     },
     onSuccess: () => window.App.readingFetch(),
   })
-  console.log(registers.filter(register => register.ptDisplay !== ''))
   const url = createSettingsFile({
     id: crypto.randomUUID(),
     registers: registers

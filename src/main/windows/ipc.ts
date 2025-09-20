@@ -51,7 +51,6 @@ function startReading(win: Electron.BrowserWindow, blocks: BlockProps[]) {
     try {
       const payload = await readModbus(blocks[i], client)
       win.webContents.send(IPC.READING.UPDATE, arrangePoints(blocks[i], payload))
-      // console.log(blocks[i])
     } catch (err) {
     } finally {
       i = i + 1
@@ -194,6 +193,12 @@ ipcMain.handle(
     const responses = []
     for (const value of registers) {
       const register = (csv.find(register => register.UUID === value.id) as CsvProps) || undefined
+      // let parsedValue = ''
+      // if(value.value === 'true' || value.value === 'false'){
+      //   parsedValue = value.value === 'true' ? 1 : 0
+      // } else {
+      //   parsedValue = value.value
+      // }
       const response = await writeModbus({
         client,
         register,
