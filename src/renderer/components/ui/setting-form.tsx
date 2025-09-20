@@ -1,12 +1,14 @@
-import { newSettingSubmitionSchema, type RegisterReadingsResponse } from 'shared/types'
+import {
+  newSettingSubmitionSchema,
+  type UpdateSettingResponse,
+  type RegisterReadingsResponse,
+} from 'shared/types'
 import { Badge } from './badge'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
-import { Input } from './input'
 import { Button } from './button'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FileOutput, FileUp } from 'lucide-react'
 import { Separator } from './separator'
 
 export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) {
@@ -37,13 +39,7 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
     if (setting.ptConversion?.options.length && setting.ptConversion?.options.length > 0) {
       setValue('newValue', setting.value.toString())
     } else if (setting.divisor) {
-      setValue(
-        'newValue',
-        setting.ptValue
-        // (Number(setting.value) / Number(setting.divisor))
-        //   .toFixed(setting.divisor.length - 1)
-        //   .toString()
-      )
+      setValue('newValue', setting.ptValue)
     }
   }, [setting])
 
@@ -75,7 +71,7 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
                 setValue('newValue', newValue)
               }}
             >
-              <SelectTrigger className="w-[220px] bg-card border-muted-foreground">
+              <SelectTrigger className="w-[346px] bg-card border-muted-foreground">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -94,7 +90,7 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
                 <input
                   type="number"
                   step={1 / Number(setting.divisor)}
-                  className="outline-none text-sm"
+                  className="outline-none text-sm w-xs py-px"
                   {...register('newValue')}
                 />
                 {setting.ptUnit && (
@@ -104,6 +100,12 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
             </div>
           )}
           <Button className="w-full cursor-pointer">Alterar parâmetro</Button>
+
+          {/* {updateSettingResponse?.error && (
+            <div className="text-xs text-destructive text-center">
+              {updateSettingResponse.error}
+            </div>
+          )} */}
         </form>
       </div>
     </div>
