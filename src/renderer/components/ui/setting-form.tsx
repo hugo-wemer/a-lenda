@@ -1,10 +1,6 @@
-import {
-  newSettingSubmitionSchema,
-  type UpdateSettingResponse,
-  type RegisterReadingsResponse,
-} from 'shared/types'
+import { newSettingSubmitionSchema, type RegisterReadingsResponse } from 'shared/types'
 import { Badge } from './badge'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
 import { Button } from './button'
 import { useForm } from 'react-hook-form'

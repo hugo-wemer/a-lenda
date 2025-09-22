@@ -5,6 +5,7 @@ import { ReadingsTable } from 'renderer/components/readings-table'
 import { useReadings } from 'renderer/store/readings'
 import type { BlockReadingResponse } from 'shared/types'
 import { SettingsContainer } from 'renderer/components/settings-container'
+import { Languages } from 'lucide-react'
 
 export function MainScreen() {
   const [version, setVersion] = useState(0)
@@ -53,6 +54,7 @@ export function MainScreen() {
           >
             Parametrização
           </TabsTrigger>
+          <Languages />
         </TabsList>
         <TabsContent value="connection" className="data-[state=inactive]:hidden p-0">
           <div className="h-[calc(100vh-105px)] flex items-center">
