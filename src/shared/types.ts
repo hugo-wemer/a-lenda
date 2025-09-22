@@ -49,6 +49,7 @@ export type EquipmentProps = {
 }
 
 export interface StoreType {
+  language: 'pt-BR' | 'en-US'
   version: number
   equipments: Record<string, EquipmentProps>
   connectedIED?: ConnectionFormType
@@ -221,4 +222,8 @@ export interface SettingsUpdateResponse {
     ptDisplay: string
     value: string
   }
+}
+
+export interface LanguageProps {
+  language: string
 }

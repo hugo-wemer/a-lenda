@@ -16,8 +16,10 @@ import { Button } from './ui/button'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { LoaderCircle, Plug, Unplug } from 'lucide-react'
 import { queryClient } from '../lib/react-query'
+import { useLanguage } from 'renderer/store/language'
 
 export function ConnectionForm() {
+  const language = useLanguage(s => s.language)
   const [equipment, setEquipment] = useState<string | null>()
   const [connectionStatus, setConnectionStatus] = useState<{
     isConnected: boolean
@@ -125,7 +127,11 @@ export function ConnectionForm() {
     onSuccess: res => {
       setConnectionStatus({
         isConnected: res.isSuccess,
-        message: res.isSuccess ? undefined : 'Falha ao conectar. Verifique a porta de comunicação',
+        message: res.isSuccess
+          ? undefined
+          : language === 'en-US'
+            ? 'Fail to connect. Verify the communication port.'
+            : 'Falha ao conectar. Verifique a porta de comunicação.',
       })
     },
   })
@@ -161,7 +167,7 @@ export function ConnectionForm() {
         <h1
           className={`font-semibold mb-2 text-sm ${connectionStatus.isConnected && 'text-muted-foreground'}`}
         >
-          Equipamento
+          {language === 'en-US' ? 'Equipment' : 'Equipamento'}
         </h1>
         <div className="flex gap-2">
           <div>
@@ -177,11 +183,15 @@ export function ConnectionForm() {
               }}
             >
               <SelectTrigger className="w-[220px] bg-card border-muted-foreground">
-                <SelectValue placeholder="Selecione um equipamento" />
+                <SelectValue
+                  placeholder={`${language === 'en-US' ? 'Select a equipment' : 'Selecione um equipamento'}`}
+                />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel className="">Linha Black</SelectLabel>
+                  <SelectLabel className="">
+                    {language === 'en-US' ? 'Black line' : 'Linha Black'}
+                  </SelectLabel>
                   {uniqueEquipmentList?.map(equipment => {
                     return (
                       <SelectItem key={equipment.id} value={equipment.name}>
@@ -192,7 +202,12 @@ export function ConnectionForm() {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <span className="text-xs text-destructive">{errors.equipment?.message}</span>
+            <span className="text-xs text-destructive">
+              {errors.equipment && language === 'pt-BR' && errors.equipment.message}
+              {errors.equipment &&
+                language === 'en-US' &&
+                `Field error ('${errors.equipment.message}')`}
+            </span>
           </div>
           <div>
             <Select
@@ -205,7 +220,9 @@ export function ConnectionForm() {
               }}
             >
               <SelectTrigger className="w-[220px] bg-card border-muted-foreground">
-                <SelectValue placeholder="Versão de firmware" />
+                <SelectValue
+                  placeholder={`${language === 'en-US' ? 'Firmware version' : 'Versão de firmware'}`}
+                />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
@@ -219,7 +236,12 @@ export function ConnectionForm() {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <span className="text-xs text-destructive">{errors.firmwareVersion?.message}</span>
+            <span className="text-xs text-destructive">
+              {errors.firmwareVersion && language === 'pt-BR' && errors.firmwareVersion.message}
+              {errors.firmwareVersion &&
+                language === 'en-US' &&
+                `Field error ('${errors.firmwareVersion.message}')`}
+            </span>
           </div>
         </div>
       </div>
@@ -227,11 +249,13 @@ export function ConnectionForm() {
         <h1
           className={`font-semibold mb-2 text-sm ${connectionStatus.isConnected && 'text-muted-foreground'}`}
         >
-          Configuração
+          {language === 'en-US' ? 'Settings' : 'Configuração'}
         </h1>
         <div className="space-y-2">
           <div>
-            <span className="text-xs text-foreground/50">Porta de conexão</span>
+            <span className="text-xs text-foreground/50">
+              {language === 'en-US' ? 'Connection port' : 'Porta de conexão'}
+            </span>
             <Select
               disabled={connectionStatus.isConnected}
               value={selectedPort}
@@ -243,7 +267,9 @@ export function ConnectionForm() {
               }}
             >
               <SelectTrigger className="w-full bg-card border-muted-foreground">
-                <SelectValue placeholder="Selecione a porta para comunicação" />
+                <SelectValue
+                  placeholder={`${language === 'en-US' ? 'Select the communication port' : 'Selecione a porta para comunicação'}`}
+                />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
@@ -261,11 +287,16 @@ export function ConnectionForm() {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <span className="text-xs text-destructive">{errors.port?.message}</span>
+            <span className="text-xs text-destructive">
+              {errors.port && language === 'pt-BR' && errors.port.message}
+              {errors.port && language === 'en-US' && `Field error ('${errors.port.message}')`}
+            </span>
           </div>
           <div className="flex gap-2">
             <div>
-              <span className="text-xs text-foreground/50">Endereço</span>
+              <span className="text-xs text-foreground/50">
+                {language === 'en-US' ? 'Address' : 'Endereço'}
+              </span>
               <Input
                 disabled={connectionStatus.isConnected}
                 type="number"
@@ -274,8 +305,8 @@ export function ConnectionForm() {
                   setValueAs: v => (v === '' ? undefined : Number(v)),
                 })}
               />
-              <span className="text-xs text-destructive">{errors.address?.message}</span>
             </div>
+
             <div>
               <span className="text-xs text-foreground/50">Baudrate</span>
               <Select
@@ -299,7 +330,6 @@ export function ConnectionForm() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <span className="text-xs text-destructive">{errors.baudrate?.message}</span>
             </div>
             <div>
               <span className="text-xs text-foreground/50">Databits</span>
@@ -321,7 +351,9 @@ export function ConnectionForm() {
               </Select>
             </div>
             <div>
-              <span className="text-xs text-foreground/50">Paridade</span>
+              <span className="text-xs text-foreground/50">
+                {language === 'en-US' ? 'Parity' : 'Paridade'}
+              </span>
               <Select
                 disabled={connectionStatus.isConnected}
                 value={selectedParity}
@@ -343,7 +375,6 @@ export function ConnectionForm() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <span className="text-xs text-destructive">{errors.parity?.message}</span>
             </div>
             <div>
               <span className="text-xs text-foreground/50">Stopbits</span>
@@ -365,9 +396,35 @@ export function ConnectionForm() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <span className="text-xs text-destructive">{errors.stopBits?.message}</span>
             </div>
           </div>
+          <div className="flex flex-col">
+            <span className="text-xs text-destructive">
+              {errors.address && language === 'pt-BR' && errors.address?.message}
+              {errors.address &&
+                language === 'en-US' &&
+                `Address field error ('${errors.address.message}')`}
+            </span>
+            <span className="text-xs text-destructive">
+              {errors.baudrate && language === 'pt-BR' && errors.baudrate?.message}
+              {errors.baudrate &&
+                language === 'en-US' &&
+                `Baudrate field error ('${errors.baudrate.message}')`}
+            </span>
+            <span className="text-xs text-destructive">
+              {errors.parity && language === 'pt-BR' && errors.parity?.message}
+              {errors.parity &&
+                language === 'en-US' &&
+                `Parity field error ('${errors.parity.message}')`}
+            </span>
+            <span className="text-xs text-destructive">
+              {errors.stopBits && language === 'pt-BR' && errors.stopBits?.message}
+              {errors.stopBits &&
+                language === 'en-US' &&
+                `StopBits field error ('${errors.stopBits.message}')`}
+            </span>
+          </div>
+
           <div>
             <span className="text-xs text-foreground/50">Timeout</span>
             <Input
@@ -390,7 +447,7 @@ export function ConnectionForm() {
           >
             <>
               <Plug className="size-4" />
-              Conectar
+              {language === 'en-US' ? 'Connect' : 'Conectar'}
             </>
           </Button>
           <Button
@@ -402,7 +459,7 @@ export function ConnectionForm() {
             disabled={isDisconnecting}
           >
             <Unplug className="size-4" />
-            Desconectar
+            {language === 'en-US' ? 'Disconnect' : 'Desconectar'}
           </Button>
           <span className="text-xs text-destructive flex justify-center">
             {connectionStatus.message}

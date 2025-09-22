@@ -41,4 +41,8 @@ export const IPC = {
   SETTINGS: {
     UPDATE: 'settings: update',
   },
+  LANGUAGE: {
+    FETCH: 'language: fetch',
+    UPDATE: 'language: update',
+  },
 }

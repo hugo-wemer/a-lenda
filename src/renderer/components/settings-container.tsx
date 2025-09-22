@@ -1,6 +1,6 @@
 import { useReadings } from 'renderer/store/readings'
 import { useMemo, useState } from 'react'
-import { Loader2, Cog, FileOutput, FileUp, Loader } from 'lucide-react'
+import { Loader2, Cog, FileOutput, FileUp } from 'lucide-react'
 import { type SettingsProps, SettingsSchema, type RegisterReadingsResponse } from 'shared/types'
 import { SettinsTree } from './ui/settings-tree'
 import { SettingForm } from './ui/setting-form'
@@ -14,14 +14,14 @@ import { ScrollArea } from './ui/scroll-area'
 import { Badge } from './ui/badge'
 import { Separator } from './ui/separator'
 import { Skeleton } from './ui/skeleton'
-import { HoverCard, HoverCardTrigger } from './ui/hover-card'
-import { HoverCardContent } from '@radix-ui/react-hover-card'
+import { useLanguage } from 'renderer/store/language'
 
 export function SettingsContainer({
   isFetchingBlocks,
 }: {
   isFetchingBlocks: boolean
 }) {
+  const language = useLanguage(s => s.language)
   const [selectedSetting, setSelectedSetting] = useState<RegisterReadingsResponse>()
   const [dialogOpen, setDialogOpen] = useState(false)
 
@@ -98,7 +98,9 @@ export function SettingsContainer({
           ) : (
             <div className="flex flex-col items-center h-full justify-center gap-4 text-muted-foreground">
               <p className="font-semibold ">
-                Selecione algum parâmetro ao lado para poder editá-lo.
+                {language === 'en-US'
+                  ? 'Select a setting to edit.'
+                  : 'Selecione algum parâmetro ao lado para poder editá-lo.'}
               </p>
               <Cog className="size-24" />
             </div>

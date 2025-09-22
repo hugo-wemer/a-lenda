@@ -5,14 +5,18 @@ import { ReadingsTable } from 'renderer/components/readings-table'
 import { useReadings } from 'renderer/store/readings'
 import type { BlockReadingResponse } from 'shared/types'
 import { SettingsContainer } from 'renderer/components/settings-container'
-import { Languages } from 'lucide-react'
+import { LanguageDropDownMenu } from 'renderer/components/language-drop-down-menu'
+import { useLanguage } from 'renderer/store/language'
 
 export function MainScreen() {
+  const { init, language } = useLanguage()
+
   const [version, setVersion] = useState(0)
   const [isFetchingBlocks, setIsFetchingBlocks] = useState(false)
   const { addBlocks } = useReadings()
 
   useEffect(() => {
+    init()
     ;(async () => {
       await window.App.updateApp()
       setVersion(await window.App.fetchAppVersion())
@@ -35,26 +39,28 @@ export function MainScreen() {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <Tabs className="flex-1 min-h-0 overflow-hidden" defaultValue="connection">
-        <TabsList className="text-foreground h-auto gap-2 rounded-none px-0 py-1 bg-card border-b-1 border-popover justify-start w-full">
-          <TabsTrigger
-            className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            value="connection"
-          >
-            Conexão
-          </TabsTrigger>
-          <TabsTrigger
-            className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            value="readings"
-          >
-            Leituras
-          </TabsTrigger>
-          <TabsTrigger
-            className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            value="settings"
-          >
-            Parametrização
-          </TabsTrigger>
-          <Languages />
+        <TabsList className="px-2 flex w-full justify-between border-b-1 border-popover  rounded-none">
+          <div className="text-foreground h-auto gap-2  px-0  bg-card justify-start">
+            <TabsTrigger
+              className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              value="connection"
+            >
+              {language === 'en-US' ? 'Connection' : 'Conexão'}
+            </TabsTrigger>
+            <TabsTrigger
+              className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              value="readings"
+            >
+              {language === 'en-US' ? 'Readings' : 'Leituras'}
+            </TabsTrigger>
+            <TabsTrigger
+              className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              value="settings"
+            >
+              {language === 'en-US' ? 'Settings' : 'Parametrização'}
+            </TabsTrigger>
+          </div>
+          <LanguageDropDownMenu />
         </TabsList>
         <TabsContent value="connection" className="data-[state=inactive]:hidden p-0">
           <div className="h-[calc(100vh-105px)] flex items-center">
