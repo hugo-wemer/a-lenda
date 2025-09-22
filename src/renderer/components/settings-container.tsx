@@ -122,7 +122,7 @@ export function SettingsContainer({
             className="aria-disabled:pointer-events-none aria-disabled:opacity-10"
           >
             <FileOutput />
-            <span>Exportar</span>
+            <span>{language === 'en-US' ? 'Export' : 'Exportar'}</span>
           </a>
         </Button>
         <input
@@ -144,7 +144,7 @@ export function SettingsContainer({
             className="aria-disabled:pointer-events-none aria-disabled:opacity-10"
           >
             <FileUp />
-            <span>Importar</span>
+            <span>{language === 'en-US' ? 'Import' : 'Importar'}</span>
           </label>
         </Button>
         <Dialog open={dialogOpen} onOpenChange={o => !isPending && setDialogOpen(o)}>
@@ -163,27 +163,26 @@ export function SettingsContainer({
                     </div>
                   </div>
                 )}
-                {updateResult?.map(
-                  reg => (
-                    <div
-                      key={reg.value.id}
-                      className="flex justify-between mx-4 text-xs text-muted-foreground font-mono"
-                    >
-                      <span className="">{reg.value.ptDisplay}</span>
-                      <div className="space-x-2">
-                        <span>{reg.value.value}</span>
-                        {reg.isSuccess ? (
-                          <Badge className="opacity-80">Sucesso</Badge>
-                        ) : (
-                          <Badge className="opacity-80" variant={'destructive'}>
-                            {reg.error}
-                          </Badge>
-                        )}
-                      </div>
+                {updateResult?.map(reg => (
+                  <div
+                    key={reg.value.id}
+                    className="flex justify-between mx-4 text-xs text-muted-foreground font-mono"
+                  >
+                    <span className="">{reg.value.ptDisplay}</span>
+                    <div className="space-x-2">
+                      <span>{reg.value.value}</span>
+                      {reg.isSuccess ? (
+                        <Badge className="opacity-80">
+                          {language === 'en-US' ? 'Success' : 'Sucesso'}
+                        </Badge>
+                      ) : (
+                        <Badge className="opacity-80" variant={'destructive'}>
+                          {reg.error}
+                        </Badge>
+                      )}
                     </div>
-                  )
-                  // <p>{reg.value.value} - {reg.isSuccess ? 'ok' : 'falha'}</p>
-                )}
+                  </div>
+                ))}
               </div>
             </ScrollArea>
           </DialogContent>

@@ -198,6 +198,7 @@ function Node({
                 node={node}
                 key={childPath}
                 path={childPath}
+                language={language}
               />
             )
           })}
