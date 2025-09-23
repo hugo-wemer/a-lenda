@@ -2,7 +2,7 @@
   "displayName": "A lenda",
   "name": "a-lenda",
   "description": "App para visualização e parametrização dos equipamentos Treetech",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "main": "./node_modules/.dev/main/index.js",
   "resources": "src/resources",
   "author": {
