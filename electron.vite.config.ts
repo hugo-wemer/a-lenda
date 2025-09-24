@@ -47,6 +47,7 @@ export default defineConfig({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       'process.platform': JSON.stringify(process.platform),
     },
+      base: './',
 
     server: {
       port: settings.port,

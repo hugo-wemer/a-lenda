@@ -41,7 +41,18 @@ export function ConnectionForm() {
       const all = Object.values(await window.App.fetchEquipmentsConfig())
       return all as EquipmentProps[]
     },
+    refetchOnWindowFocus: false,
+    retry: false,
+    // refaz a consulta a cada 1s ENQUANTO a lista estiver vazia
+    refetchInterval: q => {
+      const data = (q.state.data as EquipmentProps[] | undefined) ?? []
+      return data.length === 0 ? 1000 : false
+    },
+    // evita "undefined" e simplifica render
+    initialData: [],
   })
+
+  useEffect(() => {},[equipmentsConfig])
 
   const uniqueEquipmentList = useMemo(() => {
     if (!equipmentsConfig) return []
