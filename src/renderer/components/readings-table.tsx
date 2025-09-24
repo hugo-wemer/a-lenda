@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { createCsv } from 'renderer/lib/create-csv'
+import { useLanguage } from 'renderer/store/language'
 
 export const normalize = (s: string) =>
   s
@@ -18,6 +19,7 @@ export function ReadingsTable({
 }: {
   isFetchingBlocks: boolean
 }) {
+  const language = useLanguage(s => s.language)
   const blocks = useReadings(store => store.blocks)
   const [query, setQuery] = useState('')
   const deferredQuery = useDeferredValue(query)
@@ -47,10 +49,12 @@ export function ReadingsTable({
       <div>
         <div className="flex gap-2">
           <Input
-            placeholder={'Busque por uma descrição'}
+            placeholder={
+              language === 'en-US' ? 'Search for a description' : 'Busque por uma descrição'
+            }
             value={query}
             onChange={e => setQuery(e.target.value)}
-            onKeyDown={e => e.key === 'Escape' && setQuery('')} // Esc limpa
+            onKeyDown={e => e.key === 'Escape' && setQuery('')}
             className="pl-3"
           />
 
@@ -67,7 +71,6 @@ export function ReadingsTable({
             size="icon"
             variant={'secondary'}
             className="cursor-pointer hover:bg-muted-foreground/50"
-            // onClick={() => URL.revokeObjectURL(url)}
           >
             <a href={url} download>
               <Download />
@@ -88,18 +91,21 @@ export function ReadingsTable({
             <TableHeader className="">
               <TableRow className="hover:bg-transparent">
                 <TableHead className="h-9 py-1" />
-                <TableHead className="h-9 py-2">Descrição</TableHead>
-                <TableHead className="h-9 py-2">Valor</TableHead>
-                <TableHead className="h-9 py-2">Unidade</TableHead>
+                <TableHead className="h-9 py-2">
+                  {language === 'en-US' ? 'Description' : 'Descrição'}
+                </TableHead>
+                <TableHead className="h-9 py-2">
+                  {language === 'en-US' ? 'Value' : 'Valor'}
+                </TableHead>
+                <TableHead className="h-9 py-2">
+                  {language === 'en-US' ? 'Unit' : 'Unidade'}
+                </TableHead>
               </TableRow>
             </TableHeader>
 
             <TableBody>
               {filtered.map(register => (
-                <TableRow
-                  key={register.id}
-                  // className={`${register.mode === 'RW' && 'cursor-pointer'}`}
-                >
+                <TableRow key={register.id}>
                   <TableCell className="py-2">
                     <div
                       className={`size-2 rounded-full ${
@@ -109,13 +115,15 @@ export function ReadingsTable({
                   </TableCell>
 
                   <TableCell className="py-2 text-xs whitespace-normal break-words">
-                    {register.ptDescription}
+                    {language === 'en-US'
+                      ? register.enDescription || register.ptDescription
+                      : register.ptDescription}
                   </TableCell>
 
                   <TableCell
                     className={`py-2 text-xs ${register.outOfLimit && 'text-destructive'} ${!register.readSuccess && 'text-muted-foreground'}`}
                   >
-                    {register.ptValue}
+                    {language === 'en-US' ? register.enValue || register.ptValue : register.ptValue}
                   </TableCell>
 
                   <TableCell className="py-2 text-xs">{register.ptUnit}</TableCell>

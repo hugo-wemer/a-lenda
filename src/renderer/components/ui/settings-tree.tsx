@@ -6,6 +6,7 @@ import { useDeferredValue, useMemo, useState } from 'react'
 import { Input } from './input'
 import { ScrollArea } from './scroll-area'
 import { Button } from './button'
+import { useLanguage } from 'renderer/store/language'
 
 const normalize = (s: string) =>
   s
@@ -70,6 +71,7 @@ export function SettinsTree({
   setSelectedSetting: React.Dispatch<React.SetStateAction<RegisterReadingsResponse | undefined>>
   baseTree: MenuNode[]
 }) {
+  const language = useLanguage(s => s.language)
   const [query, setQuery] = useState('')
   const deferredQuery = useDeferredValue(query)
 
@@ -82,7 +84,11 @@ export function SettinsTree({
     <div className="space-y-2">
       <div className="flex gap-1">
         <Input
-          placeholder="Busque por menu ou descrição"
+          placeholder={
+            language === 'en-US'
+              ? 'Search for a menu of description'
+              : 'Busque por menu ou descrição'
+          }
           value={query}
           onChange={e => setQuery(e.target.value)}
           onKeyDown={e => e.key === 'Escape' && setQuery('')}
@@ -107,6 +113,7 @@ export function SettinsTree({
                   node={node}
                   key={node.name}
                   path={node.name}
+                  language={language}
                 />
               ))}
             </ul>
@@ -121,10 +128,12 @@ function Node({
   node,
   path,
   setSelectedSetting,
+  language,
 }: {
   node: MenuNode
   path: string
   setSelectedSetting: React.Dispatch<React.SetStateAction<RegisterReadingsResponse | undefined>>
+  language: string
 }) {
   const [isOpen, setIsOpen] = useState(true)
 
@@ -173,7 +182,9 @@ function Node({
               <Cog className="text-primary size-5" />
               <p>{node.name}</p>
             </div>
-            <Badge className="bg-muted-foreground text-foreground">{node.register?.ptValue}</Badge>
+            <Badge className="bg-muted-foreground text-foreground">
+              {language === 'en-US' ? node.register?.enValue : node.register?.ptValue}
+            </Badge>
           </button>
         )}
       </div>
@@ -187,6 +198,7 @@ function Node({
                 node={node}
                 key={childPath}
                 path={childPath}
+                language={language}
               />
             )
           })}

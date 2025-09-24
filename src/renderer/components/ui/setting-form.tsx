@@ -6,8 +6,10 @@ import { Button } from './button'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Separator } from './separator'
+import { useLanguage } from 'renderer/store/language'
 
 export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) {
+  const language = useLanguage(s => s.language)
   const { register, handleSubmit, setValue, reset } = useForm({
     resolver: zodResolver(newSettingSubmitionSchema),
     defaultValues: { newValue: '' },
@@ -52,9 +54,13 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
     <div className="flex flex-col items-center h-full gap-2">
       <div className="w-lg flex flex-col items-center justify-center h-full gap-4">
         <div className="space-y-2">
-          {setting.ptGroup && <Badge className="bg-blue-500">{setting.ptGroup}</Badge>}
+          {setting.ptGroup && (
+            <Badge className="bg-blue-500">
+              {language === 'en-US' ? setting.enGroup : setting.ptGroup}
+            </Badge>
+          )}
           <h1 className="font-semibold text-lg text-center leading-relaxed">
-            {setting.ptDescription}
+            {language === 'en-US' ? setting.enDescription : setting.ptDescription}
           </h1>
         </div>
         <Separator className="bg-muted-foreground" />
@@ -71,13 +77,21 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {setting.ptConversion?.options.map(option => {
-                  return (
-                    <SelectItem key={option.value} value={option.value.toString()}>
-                      {option.conversion}
-                    </SelectItem>
-                  )
-                })}
+                {language === 'en-US'
+                  ? setting.enConversion?.options.map(option => {
+                      return (
+                        <SelectItem key={option.value} value={option.value.toString()}>
+                          {option.conversion}
+                        </SelectItem>
+                      )
+                    })
+                  : setting.ptConversion?.options.map(option => {
+                      return (
+                        <SelectItem key={option.value} value={option.value.toString()}>
+                          {option.conversion}
+                        </SelectItem>
+                      )
+                    })}
               </SelectContent>
             </Select>
           ) : (
@@ -95,13 +109,9 @@ export function SettingForm({ setting }: { setting: RegisterReadingsResponse }) 
               </div>
             </div>
           )}
-          <Button className="w-full cursor-pointer">Alterar parâmetro</Button>
-
-          {/* {updateSettingResponse?.error && (
-            <div className="text-xs text-destructive text-center">
-              {updateSettingResponse.error}
-            </div>
-          )} */}
+          <Button className="w-full cursor-pointer">
+            {language === 'en-US' ? 'Change setting' : 'Alterar parâmetro'}
+          </Button>
         </form>
       </div>
     </div>

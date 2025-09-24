@@ -5,6 +5,7 @@ import type {
   ConnectionCreateResponse,
   FetchConnectionResponse,
   FetchCsvRequest,
+  LanguageProps,
   PortsType,
   SettingsFetchRequest,
   SettingsFetchResponse,
@@ -76,6 +77,14 @@ const API = {
 
   updateSettings(req: SettingsProps): Promise<SettingsUpdateResponse[]> {
     return ipcRenderer.invoke(IPC.SETTINGS.UPDATE, req)
+  },
+
+  updateLanguage(req: LanguageProps): Promise<LanguageProps> {
+    return ipcRenderer.invoke(IPC.LANGUAGE.UPDATE, req)
+  },
+
+  fetchLanguage(): Promise<LanguageProps> {
+    return ipcRenderer.invoke(IPC.LANGUAGE.FETCH)
   },
 }
 

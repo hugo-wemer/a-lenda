@@ -48,4 +48,9 @@ export default {
     icon: `${resources}/build/icons/icon.ico`,
     target: ['zip', 'portable', { target: 'nsis', arch: ['x64'] }],
   },
+
+  // nsis: {
+  //   oneClick: true,
+  //   runAfterFinish: false,
+  // },
 } satisfies Configuration

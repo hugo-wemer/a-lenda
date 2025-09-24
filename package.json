@@ -2,7 +2,7 @@
   "displayName": "A lenda",
   "name": "a-lenda",
   "description": "App para visualização e parametrização dos equipamentos Treetech",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "main": "./node_modules/.dev/main/index.js",
   "resources": "src/resources",
   "author": {
@@ -35,6 +35,7 @@
     "@aws-sdk/lib-storage": "^3.883.0",
     "@hookform/resolvers": "^5.2.1",
     "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-hover-card": "^1.1.15",
     "@radix-ui/react-scroll-area": "^1.2.10",
     "@radix-ui/react-select": "^2.2.6",

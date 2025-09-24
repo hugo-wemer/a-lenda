@@ -10,10 +10,7 @@ type BlockReadingState = {
 
 enableMapSet()
 
-export const useReadings = create<
-  BlockReadingState,
-  [['zustand/immer', never]]
->(
+export const useReadings = create<BlockReadingState, [['zustand/immer', never]]>(
   immer((set, get) => {
     function addBlocks(block: BlockReadingResponse) {
       const blockId = block.block //crypto.randomUUID()

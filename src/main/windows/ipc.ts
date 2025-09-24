@@ -11,6 +11,7 @@ import type {
   CsvProps,
   FetchConnectionResponse,
   FetchCsvRequest,
+  LanguageProps,
   SettingsFetchRequest,
   SettingsFetchResponse,
   SettingsProps,
@@ -210,6 +211,18 @@ ipcMain.handle(
     return responses
   }
 )
+
+ipcMain.handle(
+  IPC.LANGUAGE.UPDATE,
+  async (_, { language }: LanguageProps): Promise<LanguageProps> => {
+    store.set('language', language)
+    return { language }
+  }
+)
+ipcMain.handle(IPC.LANGUAGE.FETCH, async (): Promise<LanguageProps> => {
+  const language = store.get('language')
+  return { language }
+})
 
 app.on('before-quit', () => {
   stopReading()
