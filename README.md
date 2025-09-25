@@ -1,4 +1,4 @@
-<h1 align="center"><img src="./docs/icon.png" width="19" /> A Lenda — Modbus RTU</h1>
+<h1 align="center"><img src="./docs/icon.png" width="19" /> A Lenda</h1>
 
 <p align="center">⚡ Aplicativo <strong>Electron</strong> para conexão Modbus RTU com equipamentos Treetech, oferecendo leitura e parametrização com UI moderna, buscas poderosas e compatibilidade automática com novos modelos e versões.
   <br/><br/>
