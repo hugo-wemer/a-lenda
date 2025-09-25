@@ -6,10 +6,6 @@
   <a href="https://github.com/hugo-wemer/a-lenda/releases">
      <img alt="releases badge" src="https://img.shields.io/github/v/release/hugo-wemer/a-lenda?style=for-the-badge&labelColor=1C1E26&color=61ffca"/>
   </a>
-  <!-- Stars -->
-  <a href="https://github.com/hugo-wemer/a-lenda">
-     <img alt="stars badge" src="https://img.shields.io/github/stars/hugo-wemer/a-lenda?style=for-the-badge&labelColor=1C1E26&color=F28BA9"/>
-  </a>
 </p>
 
 <p align="center">
