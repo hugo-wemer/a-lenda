@@ -24,7 +24,7 @@ Além disso, a **compatibilidade com novos equipamentos e versões é disponibil
 
 <p align="center">
   <a href="#a-lenda">
-    <img alt="preview" src="./docs/settings.png" style="border-radius: 8px">
+    <img alt="preview" src="./docs/presentation.gif" style="border-radius: 8px">
   </a>
 </p>
 
