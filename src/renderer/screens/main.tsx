@@ -73,7 +73,7 @@ export function MainScreen() {
         <TabsContent value="settings">
           <SettingsContainer isFetchingBlocks={isFetchingBlocks} />
         </TabsContent>
-        <span className="absolute bottom-0 left-1/2 text-center my-2 text-sm text-muted-foreground">
+        <span className="fixed bottom-0 left-1/2 text-center my-2 text-sm text-muted-foreground">
           v{version}
         </span>
       </Tabs>
