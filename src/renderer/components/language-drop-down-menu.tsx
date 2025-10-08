@@ -9,8 +9,8 @@ import {
 import { useEffect, useState } from 'react'
 import { useLanguage } from 'renderer/store/language'
 
-// import BrazilIcon from '../assets/br-logo.png?url'
-// import UsaIcon from '../assets/usa-logo.png?url'
+import BrazilIcon from '../../resources/public/br-logo.png'
+import UsaIcon from '../../resources/public/usa-logo.png'
 
 export function LanguageDropDownMenu() {
   const { language, updateLanguage } = useLanguage()
@@ -34,9 +34,11 @@ export function LanguageDropDownMenu() {
       <DropdownMenuContent className="mr-1">
         <DropdownMenuRadioGroup value={position} onValueChange={handleChangeLanguage}>
           <DropdownMenuRadioItem value="pt-BR" className="cursor-pointer">
+            <img src={BrazilIcon} alt="Brazil" />
             pt-BR
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="en-US" className="cursor-pointer">
+            <img src={UsaIcon} alt="United States" />
             en-US
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
