@@ -7,6 +7,8 @@ import type { BlockReadingResponse } from 'shared/types'
 import { SettingsContainer } from 'renderer/components/settings-container'
 import { LanguageDropDownMenu } from 'renderer/components/language-drop-down-menu'
 import { useLanguage } from 'renderer/store/language'
+import TreetechLogo from '../../resources/public/treetech.png'
+
 
 export function MainScreen() {
   const { init, language } = useLanguage()
@@ -73,7 +75,8 @@ export function MainScreen() {
         <TabsContent value="settings">
           <SettingsContainer isFetchingBlocks={isFetchingBlocks} />
         </TabsContent>
-        <span className="fixed bottom-0 left-1/2 text-center my-2 text-sm text-muted-foreground">
+        <span className="fixed bottom-0 left-1/2 text-center my-2 text-sm text-muted-foreground flex gap-2 items-center">
+          <img src={TreetechLogo} alt="Treetech" className='h-3'/>
           v{version}
         </span>
       </Tabs>

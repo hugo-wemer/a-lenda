@@ -34,11 +34,11 @@ export function LanguageDropDownMenu() {
       <DropdownMenuContent className="mr-1">
         <DropdownMenuRadioGroup value={position} onValueChange={handleChangeLanguage}>
           <DropdownMenuRadioItem value="pt-BR" className="cursor-pointer">
-            <img src={BrazilIcon} alt="Brazil" />
+            <img src={BrazilIcon} alt="Brazil" className="size-5" />
             pt-BR
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="en-US" className="cursor-pointer">
-            <img src={UsaIcon} alt="United States" />
+            <img src={UsaIcon} alt="United States" className="size-5" />
             en-US
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
