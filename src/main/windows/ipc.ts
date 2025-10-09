@@ -207,6 +207,7 @@ ipcMain.handle(
         bypassMultiplyer: true,
       })
       responses.push({ isSuccess: response.isSuccess, error: response.error, value })
+      setTimeout(() => {}, 500)
     }
     return responses
   }

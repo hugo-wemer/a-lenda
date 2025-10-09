@@ -52,7 +52,7 @@ export function ConnectionForm() {
     initialData: [],
   })
 
-  useEffect(() => {},[equipmentsConfig])
+  useEffect(() => {}, [equipmentsConfig])
 
   const uniqueEquipmentList = useMemo(() => {
     if (!equipmentsConfig) return []

@@ -9,7 +9,7 @@ import { Button } from './ui/button'
 import { groupRegistersByPtDisplay } from 'renderer/lib/group-registers-by-ptDisplay'
 import { createSettingsFile } from 'renderer/lib/create-settings-file'
 import { useMutation } from '@tanstack/react-query'
-import { Dialog, DialogContent, DialogHeader } from './ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { ScrollArea } from './ui/scroll-area'
 import { Badge } from './ui/badge'
 import { Separator } from './ui/separator'
@@ -149,7 +149,7 @@ export function SettingsContainer({
         </Button>
         <Dialog open={dialogOpen} onOpenChange={o => !isPending && setDialogOpen(o)}>
           <DialogContent className="border border-transparent shadow-shape h-fit bg-card">
-            <DialogHeader className="font-semibold">Logs</DialogHeader>
+            <DialogTitle className="font-semibold">Logs</DialogTitle>
             <Separator className="bg-muted-foreground" />
             <ScrollArea className="h-[calc(100vh-150px)]">
               <div className="flex flex-col gap-1">
