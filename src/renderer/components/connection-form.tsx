@@ -452,7 +452,7 @@ export function ConnectionForm() {
           </div>
           <Button
             type="submit"
-            className={'mt-2 w-full cursor-pointer'}
+            className={'mt-2 w-full cursor-pointer text-gray-950'}
             hidden={connectionStatus.isConnected}
             disabled={isConnecting}
           >
