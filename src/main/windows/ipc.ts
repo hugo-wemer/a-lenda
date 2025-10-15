@@ -194,16 +194,11 @@ ipcMain.handle(
     const responses = []
     for (const value of registers) {
       const register = (csv.find(register => register.UUID === value.id) as CsvProps) || undefined
-      // let parsedValue = ''
-      // if(value.value === 'true' || value.value === 'false'){
-      //   parsedValue = value.value === 'true' ? 1 : 0
-      // } else {
-      //   parsedValue = value.value
-      // }
+      const valueToWrite = value.ptDisplay === 'CLK\\APPLY' ? 'true' : value.value
       const response = await writeModbus({
         client,
         register,
-        value: value.value,
+        value: valueToWrite,
         bypassMultiplyer: true,
       })
       responses.push({ isSuccess: response.isSuccess, error: response.error, value })
