@@ -42,7 +42,6 @@ export function interpretConversion(
 function interpret32ABCD(value: (number | boolean)[], divisor: string, minimumValue: string) {
   const high = value[0].toString(2).padStart(16, '0')
   const low = value[1].toString(2).padStart(16, '0')
-  console.log(`high: ${high}, low: ${low}`)
   const intValue = Number.parseInt(high + low, 2)
   if (Number(minimumValue) < 0) {
     const unSigned = intValue >>> 0
@@ -73,7 +72,6 @@ function interpretValue({
     return interpretConversion(Number(readings[index]), conversion, divisor)
   }
   if (treatment === '32_ABCD') {
-    console.log(`minimumValue: ${minimumValue}, val1: ${readings[0]}, val2: ${readings[1]}`)
     return interpret32ABCD([readings[index], readings[index + 1]], divisor, minimumValue)
   }
   if (Number(minimumValue) < 0) {
