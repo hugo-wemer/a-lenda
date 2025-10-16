@@ -9,7 +9,7 @@ import { Button } from './ui/button'
 import { groupRegistersByPtDisplay } from 'renderer/lib/group-registers-by-ptDisplay'
 import { createSettingsFile } from 'renderer/lib/create-settings-file'
 import { useMutation } from '@tanstack/react-query'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
+import { Dialog, DialogContent, DialogTitle } from './ui/dialog'
 import { ScrollArea } from './ui/scroll-area'
 import { Badge } from './ui/badge'
 import { Separator } from './ui/separator'
@@ -89,7 +89,11 @@ export function SettingsContainer({
               </motion.div>
             </div>
           ) : (
-            <SettinsTree baseTree={baseTree} setSelectedSetting={setSelectedSetting} />
+            <SettinsTree
+              baseTree={baseTree}
+              setSelectedSetting={setSelectedSetting}
+              selectedSetting={selectedSetting}
+            />
           )}
         </div>
         <div className="w-full">

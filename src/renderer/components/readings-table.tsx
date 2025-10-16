@@ -42,7 +42,21 @@ export function ReadingsTable({
     })
   }, [registers, deferredQuery])
 
-  const url = createCsv(registers)
+  const registersSimplifiedToCsv =
+    language === 'pt-BR'
+      ? registers.map(({ readSuccess, ptUnit, ptDescription, ptValue }) => ({
+          Descrição: ptDescription,
+          Valor: ptValue,
+          Unidade: ptUnit,
+          'Sucesso na leitura': readSuccess,
+        }))
+      : registers.map(({ readSuccess, enUnit, enDescription, enValue }) => ({
+          Description: enDescription,
+          Value: enValue,
+          Unit: enUnit,
+          'Read success': readSuccess,
+        }))
+  const url = createCsv(registersSimplifiedToCsv)
 
   return (
     <div className="flex h-full min-h-0 flex-col p-2 gap-2">

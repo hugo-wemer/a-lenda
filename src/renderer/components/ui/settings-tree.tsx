@@ -2,7 +2,7 @@ import { ChevronRightIcon, Cog, FolderCog, RefreshCcw } from 'lucide-react'
 import type { MenuNode } from 'renderer/lib/group-registers-by-ptDisplay'
 import type { RegisterReadingsResponse } from 'shared/types'
 import { Badge } from './badge'
-import { useDeferredValue, useMemo, useState } from 'react'
+import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { Input } from './input'
 import { ScrollArea } from './scroll-area'
 import { Button } from './button'
@@ -66,14 +66,27 @@ function filterTree(
 
 export function SettinsTree({
   setSelectedSetting,
+  selectedSetting,
   baseTree,
 }: {
   setSelectedSetting: React.Dispatch<React.SetStateAction<RegisterReadingsResponse | undefined>>
+  selectedSetting: RegisterReadingsResponse | undefined
   baseTree: MenuNode[]
 }) {
   const language = useLanguage(s => s.language)
   const [query, setQuery] = useState('')
   const deferredQuery = useDeferredValue(query)
+
+  useEffect(() => {
+    if (!selectedSetting) return
+    requestAnimationFrame(() => {
+      const el = document.querySelector<HTMLButtonElement>(
+        `[data-node-id="${CSS.escape(selectedSetting.id)}"]`
+      )
+      el?.scrollIntoView({ block: 'center' })
+      el?.focus()
+    })
+  }, [selectedSetting])
 
   const { pruned } = useMemo(
     () => filterTree(baseTree as UINode[], deferredQuery),
@@ -114,6 +127,7 @@ export function SettinsTree({
                   key={node.name}
                   path={node.name}
                   language={language}
+                  selectedId={selectedSetting?.id}
                 />
               ))}
             </ul>
@@ -129,11 +143,13 @@ function Node({
   path,
   setSelectedSetting,
   language,
+  selectedId,
 }: {
   node: MenuNode
   path: string
   setSelectedSetting: React.Dispatch<React.SetStateAction<RegisterReadingsResponse | undefined>>
   language: string
+  selectedId: string | undefined
 }) {
   const [isOpen, setIsOpen] = useState(true)
 
@@ -153,6 +169,7 @@ function Node({
           </button>
         ) : (
           <button
+            data-node-id={node.register?.id}
             onClick={() =>
               node.register &&
               setSelectedSetting({
@@ -199,6 +216,7 @@ function Node({
                 key={childPath}
                 path={childPath}
                 language={language}
+                selectedId={selectedId}
               />
             )
           })}
