@@ -26,7 +26,6 @@ import { readModbus } from './lib/read-modbus'
 import { arrangePoints } from './lib/arrange-points'
 import { parseConversionString } from './lib/parse-conversion-string'
 import { writeModbus } from './lib/write-modbus'
-import { fromModbusCode } from './lib/from-modbus-code'
 
 let client: ModbusRTU | null = null
 let csv: any[]
