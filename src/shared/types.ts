@@ -53,6 +53,7 @@ export interface StoreType {
   version: number
   equipments: Record<string, EquipmentProps>
   connectedIED?: ConnectionFormType
+  userPassword: number
 }
 
 export interface FetchCsvRequest {
@@ -226,4 +227,8 @@ export interface SettingsUpdateResponse {
 
 export interface LanguageProps {
   language: string
+}
+
+export interface passwordRequest {
+  password: string
 }

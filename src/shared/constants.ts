@@ -45,4 +45,7 @@ export const IPC = {
     FETCH: 'language: fetch',
     UPDATE: 'language: update',
   },
+  PASSWORD: {
+    UPDATE: 'password: update',
+  },
 }

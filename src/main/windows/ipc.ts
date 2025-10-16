@@ -219,6 +219,10 @@ ipcMain.handle(IPC.LANGUAGE.FETCH, async (): Promise<LanguageProps> => {
   return { language }
 })
 
+ipcMain.handle(IPC.PASSWORD.UPDATE, async (_, { password }): Promise<void> => {
+  store.set('userPassword', password)
+})
+
 app.on('before-quit', () => {
   stopReading()
   client?.close()
