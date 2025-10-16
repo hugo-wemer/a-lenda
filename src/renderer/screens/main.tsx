@@ -114,7 +114,7 @@ export function MainScreen() {
         <TabsContent value="settings">
           <SettingsContainer isFetchingBlocks={isFetchingBlocks} />
         </TabsContent>
-        <span className="fixed bottom-0 left-1/2 text-center my-2 text-sm text-muted-foreground flex gap-2 items-center">
+        <span className="fixed bottom-0 left-[1/2] w-screen justify-center text-center my-2 text-sm text-muted-foreground flex gap-2 items-center">
           <img src={TreetechGrayLogo} alt="Treetech" className="h-3" />v{version}
         </span>
       </Tabs>
