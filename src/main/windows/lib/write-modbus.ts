@@ -14,6 +14,8 @@ export async function writeModbus({
     integerValue = integerValue & 0xffff
   }
 
+  // LER REG QUE INDICA DESBLOQUEIO, SE BOQUEADO, ESCREVER A SENHA ANTES DE PROSSEGUIR.
+
   switch (register['Tipo (Modbus)']) {
     case 'Holding register': {
       if (register.Tratamento === '32_ABCD') {

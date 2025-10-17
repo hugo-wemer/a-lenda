@@ -130,8 +130,8 @@ export interface BlockProps {
     initial: number
     quantity: number
   }
-  registers: RegisterProps[]
-  table: string
+  registers?: RegisterProps[]
+  table?: string
   type: string
 }
 

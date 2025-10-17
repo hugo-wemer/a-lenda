@@ -6,6 +6,7 @@ import { enableMapSet } from 'immer'
 type BlockReadingState = {
   blocks: Map<string, BlockReadingResponse>
   addBlocks: (block: BlockReadingResponse) => void
+  clearBlocks: () => void
 }
 
 enableMapSet()
@@ -19,9 +20,16 @@ export const useReadings = create<BlockReadingState, [['zustand/immer', never]]>
       })
     }
 
+    const clearBlocks = () => {
+      set(d => {
+        d.blocks = new Map()
+      })
+    }
+
     return {
       blocks: new Map(),
       addBlocks,
+      clearBlocks,
     }
   })
 )
