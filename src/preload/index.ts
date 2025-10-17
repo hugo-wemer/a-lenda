@@ -14,6 +14,7 @@ import type {
   StoreType,
   UpdateSettingRequest,
   UpdateSettingResponse,
+  userPasswordFormType,
 } from 'shared/types'
 
 type Unsubscribe = () => void
@@ -85,6 +86,10 @@ const API = {
 
   fetchLanguage(): Promise<LanguageProps> {
     return ipcRenderer.invoke(IPC.LANGUAGE.FETCH)
+  },
+
+  updateUserPassword(req: userPasswordFormType): Promise<void> {
+    return ipcRenderer.invoke(IPC.PASSWORD.UPDATE, req)
   },
 }
 
