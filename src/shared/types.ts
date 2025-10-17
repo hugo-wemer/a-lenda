@@ -53,6 +53,7 @@ export interface StoreType {
   version: number
   equipments: Record<string, EquipmentProps>
   connectedIED?: ConnectionFormType
+  userPassword: number
 }
 
 export interface FetchCsvRequest {
@@ -129,8 +130,8 @@ export interface BlockProps {
     initial: number
     quantity: number
   }
-  registers: RegisterProps[]
-  table: string
+  registers?: RegisterProps[]
+  table?: string
   type: string
 }
 
@@ -226,4 +227,18 @@ export interface SettingsUpdateResponse {
 
 export interface LanguageProps {
   language: string
+}
+
+export const userPasswordFormSchema = z.object({
+  password: z
+    .number()
+    .int({ message: 'O timeout precisa ser um número inteiro' })
+    .min(0, { message: 'O timeout precisa ser maior ou igual a 100ms' })
+    .max(8191, { message: 'O timeout precisa ser menor ou igual a 8191' }),
+})
+
+export type userPasswordFormType = z.infer<typeof userPasswordFormSchema>
+
+export interface passwordRequest {
+  password: string
 }

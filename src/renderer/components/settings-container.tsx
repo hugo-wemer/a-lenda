@@ -15,6 +15,7 @@ import { Badge } from './ui/badge'
 import { Separator } from './ui/separator'
 import { Skeleton } from './ui/skeleton'
 import { useLanguage } from 'renderer/store/language'
+import { PasswordRequireForm } from './password-require-form'
 
 export function SettingsContainer({
   isFetchingBlocks,

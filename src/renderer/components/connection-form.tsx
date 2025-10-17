@@ -17,6 +17,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { LoaderCircle, Plug, Unplug } from 'lucide-react'
 import { queryClient } from '../lib/react-query'
 import { useLanguage } from 'renderer/store/language'
+import { useReadings } from 'renderer/store/readings'
 
 export function ConnectionForm() {
   const language = useLanguage(s => s.language)
@@ -26,6 +27,7 @@ export function ConnectionForm() {
     message?: string
   }>({ isConnected: false })
   const [connectedIED, setConnectedIED] = useState<ConnectionFormType | undefined>()
+  const { clearBlocks } = useReadings()
 
   const { data: ports, isFetching: isFetchingPorts } = useQuery({
     queryKey: ['fetchPorts'],
@@ -152,6 +154,7 @@ export function ConnectionForm() {
       return disconnection
     },
     onSuccess: res => {
+      clearBlocks()
       setConnectionStatus({
         isConnected: !res.isSuccess,
         message: res.isSuccess ? undefined : 'Falha ao desconectar. Por favor reinicie o programa',

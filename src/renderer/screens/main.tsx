@@ -9,6 +9,7 @@ import { LanguageDropDownMenu } from 'renderer/components/language-drop-down-men
 import { useLanguage } from 'renderer/store/language'
 import TreetechGrayLogo from '../../resources/public/treetech_gray.png'
 import TreetechGreenLogo from '../../resources/public/treetech_green.png'
+import { PasswordRequireForm } from 'renderer/components/password-require-form'
 
 export function MainScreen() {
   const { init, language } = useLanguage()
@@ -101,7 +102,10 @@ export function MainScreen() {
               </TabsTrigger>
             </div>
           </div>
-          <LanguageDropDownMenu />
+          <div>
+            <LanguageDropDownMenu />
+            <PasswordRequireForm />
+          </div>
         </TabsList>
         <TabsContent value="connection" className="data-[state=inactive]:hidden p-0">
           <div className="h-[calc(100vh-105px)] flex items-center">

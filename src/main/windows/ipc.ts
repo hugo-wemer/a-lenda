@@ -71,6 +71,33 @@ function stopReading() {
   isReading = false
 }
 
+async function checkAndUnlockWrite(client: ModbusRTU | null, csv: any[]) {
+  const usbPasswordRequirementRegister = csv.find(
+    register =>
+      register['Descrição pt'] === 'Parâmetro de senha para desbloqueio da escrita via USB'
+  )
+  if (usbPasswordRequirementRegister) {
+    const timeToWriteRegister = csv.find(
+      register => register['Descrição pt'] === 'Tempo restante de acesso de escrita via USB'
+    )
+    const timeInSecondsToWrite = (await readModbus(
+      {
+        block: { initial: Number(timeToWriteRegister['Registrador (Modbus)']), quantity: 1 },
+        type: timeToWriteRegister['Tipo (Modbus)'],
+      },
+      client
+    )) as number[]
+    if (timeInSecondsToWrite[0] < 30) {
+      const userPassword = store.get('userPassword')
+      const writePasswordResult = await writeModbus({
+        register: usbPasswordRequirementRegister,
+        client,
+        value: userPassword.toString(),
+      })
+    }
+  }
+}
+
 ipcMain.handle(IPC.APP_VERSION.UPDATE, async (): Promise<any> => {
   try {
     const response = await getConfigFile()
@@ -176,6 +203,7 @@ ipcMain.handle(
 ipcMain.handle(
   IPC.SETTING.UPDATE,
   async (_, { register }: UpdateSettingRequest): Promise<UpdateSettingResponse> => {
+    await checkAndUnlockWrite(client, csv)
     const reg = csv.find(reg => reg.UUID === register.id) as CsvProps
     const updateStatus = writeModbus({ register: reg, client, value: register.newValue })
     return updateStatus
@@ -191,6 +219,7 @@ ipcMain.handle(
   IPC.SETTINGS.UPDATE,
   async (_, { registers }: SettingsProps): Promise<SettingsUpdateResponse[]> => {
     const responses = []
+    await checkAndUnlockWrite(client, csv)
     for (const value of registers) {
       const register = (csv.find(register => register.UUID === value.id) as CsvProps) || undefined
       const valueToWrite = value.ptDisplay === 'CLK\\APPLY' ? 'true' : value.value
@@ -217,6 +246,10 @@ ipcMain.handle(
 ipcMain.handle(IPC.LANGUAGE.FETCH, async (): Promise<LanguageProps> => {
   const language = store.get('language')
   return { language }
+})
+
+ipcMain.handle(IPC.PASSWORD.UPDATE, async (_, { password }): Promise<void> => {
+  store.set('userPassword', password)
 })
 
 app.on('before-quit', () => {
