@@ -6,6 +6,7 @@ import { ENVIRONMENT } from 'shared/constants'
 import { displayName } from '~/package.json'
 import './ipc'
 import './lib/store'
+import { store } from './lib/store'
 // import '~/env'
 
 export async function MainWindow() {
@@ -37,6 +38,7 @@ export async function MainWindow() {
     for (const window of BrowserWindow.getAllWindows()) {
       window.destroy()
     }
+    store.delete('connectedIED')
   })
 
   return window
